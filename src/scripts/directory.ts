@@ -26,6 +26,9 @@ function setup(root: ParentNode = document) {
   const showingEl = root.querySelector<HTMLElement>("[data-showing]");
   const resetBtn = root.querySelector<HTMLButtonElement>("[data-reset]");
   const sortBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-sort]"));
+  const searchBar = root.querySelector<HTMLElement>("[data-searchbar]");
+  const searchInput = root.querySelector<HTMLInputElement>("[data-search-input]");
+  const searchClear = root.querySelector<HTMLButtonElement>("[data-search-clear]");
 
   // Parse each row's values per dimension into Sets.
   const parsed = rows.map((el) => {
@@ -34,8 +37,17 @@ function setup(root: ParentNode = document) {
       const raw = el.dataset[d] ?? "";
       vals[d] = new Set(raw.split("|").map((v) => v.trim()).filter(Boolean));
     }
-    return { el, vals, name: el.dataset.name ?? "" };
+    const search = (el.dataset.search ?? el.dataset.name ?? "").toLowerCase();
+    return { el, vals, name: el.dataset.name ?? "", search };
   });
+
+  function query(): string {
+    return (searchInput?.value ?? "").trim().toLowerCase();
+  }
+
+  function matchesSearch(row: (typeof parsed)[number], q: string) {
+    return q === "" || row.search.includes(q);
+  }
 
   function checkedByDim(): Record<string, Set<string>> {
     const out: Record<string, Set<string>> = {};
@@ -65,10 +77,13 @@ function setup(root: ParentNode = document) {
 
   function apply() {
     const checked = checkedByDim();
+    const q = query();
     let visible = 0;
 
+    searchBar?.classList.toggle("has-query", q !== "");
+
     for (const row of parsed) {
-      const show = rowMatches(row, checked);
+      const show = rowMatches(row, checked) && matchesSearch(row, q);
       row.el.classList.toggle("row-hidden", !show);
       if (show) visible++;
     }
@@ -91,7 +106,7 @@ function setup(root: ParentNode = document) {
       const val = cb.value;
       let n = 0;
       for (const row of parsed) {
-        if (rowMatches(row, checked, dim) && row.vals[dim].has(val)) n++;
+        if (rowMatches(row, checked, dim) && matchesSearch(row, q) && row.vals[dim].has(val)) n++;
       }
       const span = root.querySelector<HTMLElement>(`[data-facet-count="${dim}:${cssEscape(val)}"]`);
       if (span) span.textContent = String(n);
@@ -120,8 +135,15 @@ function setup(root: ParentNode = document) {
 
   checkboxes.forEach((cb) => cb.addEventListener("change", apply));
   sortBtns.forEach((b) => b.addEventListener("click", () => sortBy(b.dataset.sort!)));
+  searchInput?.addEventListener("input", apply);
+  searchClear?.addEventListener("click", () => {
+    if (searchInput) searchInput.value = "";
+    searchInput?.focus();
+    apply();
+  });
   resetBtn?.addEventListener("click", () => {
     checkboxes.forEach((cb) => (cb.checked = false));
+    if (searchInput) searchInput.value = "";
     apply();
   });
 

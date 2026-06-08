@@ -58,6 +58,17 @@ const sectorCount = facets.sector.length;
             </div>
           </div>
 
+          <div class="searchbar" data-searchbar>
+            <span class="glyph">⌕</span>
+            <input
+              type="search"
+              data-search-input
+              placeholder="Search by company, sector, or city"
+              aria-label="Search employers"
+            />
+            <button class="clear-search" data-search-clear>Clear</button>
+          </div>
+
           <div class="table-wrap">
             <table class="dir" data-dims="sector,size,geography">
               <thead>
@@ -74,6 +85,7 @@ const sectorCount = facets.sector.length;
                   <tr
                     class="row"
                     data-name={e.name}
+                    data-search={[e.name, e.headquarters, ...e.sectors].join(" ").toLowerCase()}
                     data-sector={e.sectors.join("|")}
                     data-size={e.size}
                     data-geography={e.geography.join("|")}

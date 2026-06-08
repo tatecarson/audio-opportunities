@@ -339,6 +339,66 @@ a {
   color: #fff;
 }
 
+/* ---- search bar ---- */
+.searchbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--card);
+}
+
+/* The bare input drops its own outline; surface the focus cue on the row
+   instead so keyboard users get a clear, on-brand indicator (WCAG 2.4.7). */
+.searchbar:focus-within {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.searchbar:focus-within .glyph {
+  color: var(--accent);
+}
+
+.searchbar .glyph {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-40);
+}
+
+.searchbar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  padding: 2px 0;
+}
+
+.searchbar input::placeholder {
+  color: var(--ink-40);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+}
+
+.searchbar .clear-search {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: var(--r);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-60);
+  padding: 3px 8px;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.searchbar.has-query .clear-search {
+  visibility: visible;
+}
+
 /* ---- table ---- */
 .table-wrap {
   overflow-x: auto;
