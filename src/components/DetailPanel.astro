@@ -12,7 +12,12 @@
         <h2 id="detail-title" data-detail-title></h2>
         <a class="detail-link" data-detail-link target="_blank" rel="noopener" hidden></a>
       </div>
-      <button class="detail-x" data-detail-close aria-label="Close detail">×</button>
+      <div class="detail-nav">
+        <span class="detail-pos" data-detail-pos></span>
+        <button class="detail-nav-btn" data-detail-prev aria-label="Previous result (↑)" title="Previous (↑)">↑</button>
+        <button class="detail-nav-btn" data-detail-next aria-label="Next result (↓)" title="Next (↓)">↓</button>
+        <button class="detail-x" data-detail-close aria-label="Close detail" title="Close (Esc)">×</button>
+      </div>
     </div>
     <dl class="detail-body" data-detail-body></dl>
   </div>

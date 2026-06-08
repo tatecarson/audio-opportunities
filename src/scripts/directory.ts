@@ -6,7 +6,7 @@
  *   <tbody> <tr class="row" data-sector="A|B" data-size="C" ...> </tr>
  *   <input type="checkbox" data-facet="sector" value="A">
  *   <span data-facet-count="sector:A">12</span>
- *   buttons[data-sort="az"|"count"], span[data-showing], span[data-total]
+ *   span[data-showing] for the live "showing N" count
  *
  * Within a dimension, checked options are OR'd; across dimensions they are AND'd.
  * Facet counts update to reflect rows matching the *other* dimensions.
@@ -25,7 +25,6 @@ function setup(root: ParentNode = document) {
   );
   const showingEl = root.querySelector<HTMLElement>("[data-showing]");
   const resetBtn = root.querySelector<HTMLButtonElement>("[data-reset]");
-  const sortBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-sort]"));
   const searchBar = root.querySelector<HTMLElement>("[data-searchbar]");
   const searchInput = root.querySelector<HTMLInputElement>("[data-search-input]");
   const searchClear = root.querySelector<HTMLButtonElement>("[data-search-clear]");
@@ -120,21 +119,7 @@ function setup(root: ParentNode = document) {
     return v.replace(/"/g, '\\"');
   }
 
-  function sortBy(mode: string) {
-    const sorted = [...parsed];
-    if (mode === "az") {
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      // restore original DOM order
-      sorted.sort((a, b) => rows.indexOf(a.el) - rows.indexOf(b.el));
-    }
-    for (const row of sorted) tbody.insertBefore(row.el, emptyRow);
-    sortBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.sort === mode)));
-    apply();
-  }
-
   checkboxes.forEach((cb) => cb.addEventListener("change", apply));
-  sortBtns.forEach((b) => b.addEventListener("click", () => sortBy(b.dataset.sort!)));
   searchInput?.addEventListener("input", apply);
   searchClear?.addEventListener("click", () => {
     if (searchInput) searchInput.value = "";
@@ -161,7 +146,33 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
   const titleEl = panel.querySelector<HTMLElement>("[data-detail-title]");
   const linkEl = panel.querySelector<HTMLAnchorElement>("[data-detail-link]");
   const bodyEl = panel.querySelector<HTMLElement>("[data-detail-body]");
+  const prevBtn = panel.querySelector<HTMLButtonElement>("[data-detail-prev]");
+  const nextBtn = panel.querySelector<HTMLButtonElement>("[data-detail-next]");
+  const posEl = panel.querySelector<HTMLElement>("[data-detail-pos]");
   let lastFocus: HTMLElement | null = null;
+  let current: HTMLTableRowElement | null = null;
+
+  /** Rows currently visible (passing filters/search), in display order. */
+  function visibleRows() {
+    return rows.filter((r) => !r.classList.contains("row-hidden"));
+  }
+
+  /** Reflect the open row's position and enable/disable prev/next. */
+  function updateNav() {
+    const list = visibleRows();
+    const idx = current ? list.indexOf(current) : -1;
+    if (prevBtn) prevBtn.disabled = idx <= 0;
+    if (nextBtn) nextBtn.disabled = idx < 0 || idx >= list.length - 1;
+    if (posEl) posEl.textContent = idx >= 0 ? `${idx + 1} / ${list.length}` : "";
+  }
+
+  /** Move to the previous/next visible row without closing the panel. */
+  function navigate(dir: 1 | -1) {
+    const list = visibleRows();
+    if (!current) return;
+    const ni = list.indexOf(current) + dir;
+    if (ni >= 0 && ni < list.length) open(list[ni]);
+  }
 
   interface Detail {
     title: string;
@@ -206,13 +217,16 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
       bodyEl.append(wrap);
     }
 
-    lastFocus = document.activeElement as HTMLElement;
+    if (panel.hidden) lastFocus = document.activeElement as HTMLElement;
+    current = row;
     panel.hidden = false;
+    updateNav();
     card?.focus();
   }
 
   function close() {
     panel.hidden = true;
+    current = null;
     lastFocus?.focus();
   }
 
@@ -236,8 +250,19 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
   panel.querySelectorAll<HTMLElement>("[data-detail-close]").forEach((el) =>
     el.addEventListener("click", close),
   );
+  prevBtn?.addEventListener("click", () => navigate(-1));
+  nextBtn?.addEventListener("click", () => navigate(1));
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !panel.hidden) close();
+    if (panel.hidden) return;
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      navigate(-1);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      navigate(1);
+    }
   });
 }
 
