@@ -1,0 +1,32 @@
+---
+interface Props {
+  active: "employers" | "programs";
+  employerCount: number;
+  programCount: number;
+}
+const { active, employerCount, programCount } = Astro.props;
+const today = new Date().toISOString().slice(0, 10);
+---
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">AD</span>
+    <span>
+      <span class="brand-name">Audio Directory</span><br />
+      <span class="brand-sub">Careers · {new Date().getFullYear()}</span>
+    </span>
+  </div>
+
+  <nav class="tabs" aria-label="Directory sections">
+    <a class="tab" href="/" aria-current={active === "employers" ? "page" : undefined}>
+      Employers <span class="count">{employerCount}</span>
+    </a>
+    <a class="tab" href="/programs" aria-current={active === "programs" ? "page" : undefined}>
+      Programs <span class="count">{programCount}</span>
+    </a>
+  </nav>
+
+  <div class="topbar-meta">
+    <span>Verified ≤ {today}</span>
+  </div>
+</header>
