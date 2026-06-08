@@ -99,9 +99,7 @@ const sectorCount = facets.sector.length;
                         "Hiring geography": e.geography.join(", "),
                         "Internship program": e.internship,
                         "Entry-level roles": e.roles,
-                        "Handshake status": e.handshake,
                         Notes: e.notes,
-                        "Last verified": e.lastVerified,
                       },
                     })}
                   >
@@ -149,7 +147,9 @@ const sectorCount = facets.sector.length;
             <span class="showing">
               Showing <b data-showing>{employers.length}</b> of {employers.length} employers
             </span>
-            <span>Audio Directory</span>
+            <a class="foot-link" href="mailto:tate.carson@dsu.edu?subject=Audio%20Directory%20feedback">
+              Something off, or a sector to add? Email me ↗
+            </a>
           </footer>
         </section>
       </div>

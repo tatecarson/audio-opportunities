@@ -206,7 +206,7 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
 
     bodyEl.replaceChildren();
     for (const [label, value] of Object.entries(data.fields)) {
-      if (!value) continue; // omit empty fields
+      if (!value || value.trim().toLowerCase() === "unknown") continue; // omit empty / "Unknown"
       const wrap = document.createElement("div");
       wrap.className = "field";
       const dt = document.createElement("dt");
