@@ -147,7 +147,98 @@ function setup(root: ParentNode = document) {
     apply();
   });
 
+  setupDetailPanel(root, rows);
   apply();
+}
+
+/** Row-click → detail sidebar, populated from each row's data-detail payload. */
+function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
+  const panel = root.querySelector<HTMLElement>("[data-detail-panel]");
+  if (!panel) return;
+
+  const card = panel.querySelector<HTMLElement>(".detail-card");
+  const avatarEl = panel.querySelector<HTMLElement>("[data-detail-avatar]");
+  const titleEl = panel.querySelector<HTMLElement>("[data-detail-title]");
+  const linkEl = panel.querySelector<HTMLAnchorElement>("[data-detail-link]");
+  const bodyEl = panel.querySelector<HTMLElement>("[data-detail-body]");
+  let lastFocus: HTMLElement | null = null;
+
+  interface Detail {
+    title: string;
+    initials: string;
+    url?: string;
+    urlLabel?: string;
+    fields: Record<string, string>;
+  }
+
+  function open(row: HTMLTableRowElement) {
+    const raw = row.dataset.detail;
+    if (!raw || !bodyEl) return;
+    let data: Detail;
+    try {
+      data = JSON.parse(raw) as Detail;
+    } catch {
+      return;
+    }
+
+    if (avatarEl) avatarEl.textContent = data.initials ?? "";
+    if (titleEl) titleEl.textContent = data.title ?? "";
+    if (linkEl) {
+      if (data.url) {
+        linkEl.href = data.url;
+        linkEl.textContent = data.urlLabel ?? "Visit ↗";
+        linkEl.hidden = false;
+      } else {
+        linkEl.hidden = true;
+      }
+    }
+
+    bodyEl.replaceChildren();
+    for (const [label, value] of Object.entries(data.fields)) {
+      if (!value) continue; // omit empty fields
+      const wrap = document.createElement("div");
+      wrap.className = "field";
+      const dt = document.createElement("dt");
+      dt.textContent = label;
+      const dd = document.createElement("dd");
+      dd.textContent = value;
+      wrap.append(dt, dd);
+      bodyEl.append(wrap);
+    }
+
+    lastFocus = document.activeElement as HTMLElement;
+    panel.hidden = false;
+    card?.focus();
+  }
+
+  function close() {
+    panel.hidden = true;
+    lastFocus?.focus();
+  }
+
+  for (const row of rows) {
+    row.tabIndex = 0;
+    row.setAttribute("role", "button");
+    row.addEventListener("click", (e) => {
+      // Let real links (e.g. the company name) behave normally.
+      if ((e.target as HTMLElement).closest("a")) return;
+      open(row);
+    });
+    row.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        if ((e.target as HTMLElement).closest("a")) return;
+        e.preventDefault();
+        open(row);
+      }
+    });
+  }
+
+  panel.querySelectorAll<HTMLElement>("[data-detail-close]").forEach((el) =>
+    el.addEventListener("click", close),
+  );
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !panel.hidden) close();
+  });
 }
 
 setup();

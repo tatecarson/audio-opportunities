@@ -553,6 +553,144 @@ table.dir tbody tr:hover {
   font-size: 12px;
 }
 
+/* ---- row affordance ---- */
+table.dir tbody tr.row {
+  cursor: pointer;
+}
+
+/* ---- detail panel ---- */
+.detail[hidden] {
+  display: none;
+}
+
+.detail {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.detail-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 19, 15, 0.32);
+  animation: detail-fade 0.15s ease-out;
+}
+
+.detail-card {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 440px;
+  max-width: 92vw;
+  background: var(--card);
+  border-left: 1px solid var(--ink);
+  box-shadow: -16px 0 40px rgba(20, 19, 15, 0.12);
+  overflow-y: auto;
+  animation: detail-slide 0.18s ease-out;
+  outline: none;
+}
+
+@keyframes detail-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes detail-slide {
+  from { transform: translateX(16px); opacity: 0.4; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.detail-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--ink);
+  position: sticky;
+  top: 0;
+  background: var(--card);
+}
+
+.detail-head .avatar {
+  width: 38px;
+  height: 38px;
+  font-size: 13px;
+}
+
+.detail-titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-titles h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.detail-link {
+  display: inline-block;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.detail-link:hover {
+  text-decoration: underline;
+}
+
+.detail-x {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: var(--r);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-60);
+  cursor: pointer;
+}
+
+.detail-x:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.detail-body {
+  margin: 0;
+  padding: 8px 20px 28px;
+}
+
+.detail-body .field {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-2);
+}
+
+.detail-body dt {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-40);
+  margin-bottom: 4px;
+}
+
+.detail-body dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
 /* ---- footer ---- */
 .foot {
   display: flex;
