@@ -104,7 +104,6 @@ const fundingClass = (s: string) =>
                         "Application deadline": p.deadline,
                         Region: p.regions.join(", "),
                         Notes: p.notes,
-                        "Last verified": p.lastVerified,
                       },
                     })}
                   >
@@ -148,7 +147,9 @@ const fundingClass = (s: string) =>
             <span class="showing">
               Showing <b data-showing>{programs.length}</b> of {programs.length} programs
             </span>
-            <span>Audio Directory</span>
+            <a class="foot-link" href="mailto:tate.carson@dsu.edu?subject=Audio%20Directory%20feedback">
+              Something off, or a program to add? Email me ↗
+            </a>
           </footer>
         </section>
       </div>

@@ -5,7 +5,6 @@ interface Props {
   programCount: number;
 }
 const { active, employerCount, programCount } = Astro.props;
-const today = new Date().toISOString().slice(0, 10);
 ---
 
 <header class="topbar">
@@ -13,7 +12,7 @@ const today = new Date().toISOString().slice(0, 10);
     <span class="brand-mark">AD</span>
     <span>
       <span class="brand-name">Audio Directory</span><br />
-      <span class="brand-sub">Careers · {new Date().getFullYear()}</span>
+      <span class="brand-sub">Jobs &amp; grad programs</span>
     </span>
   </div>
 
@@ -26,7 +25,4 @@ const today = new Date().toISOString().slice(0, 10);
     </a>
   </nav>
 
-  <div class="topbar-meta">
-    <span>Verified ≤ {today}</span>
-  </div>
 </header>

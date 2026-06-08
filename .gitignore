@@ -21,3 +21,6 @@ npm-debug.log*
 
 # Netlify CLI local link state
 .netlify
+
+# Codex CLI local artifacts
+.codex
