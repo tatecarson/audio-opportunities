@@ -1,0 +1,16 @@
+# Netlify build configuration for the Astro static site.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Astro 6 needs a modern Node; match package.json "engines".
+  NODE_VERSION = "22.12.0"
+
+  # AIRTABLE_BASE_ID is an Airtable base identifier (visible in base URLs), not a
+  # credential — it is documented in the README and used as a default in
+  # src/lib/airtable.ts. Exclude it from Netlify's secrets scanner so the build
+  # doesn't fail on its presence in repo files. The real secret, AIRTABLE_TOKEN,
+  # lives only in Netlify env vars / a git-ignored .env and is never committed.
+  SECRETS_SCAN_OMIT_KEYS = "AIRTABLE_BASE_ID"

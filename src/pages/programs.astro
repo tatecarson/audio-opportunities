@@ -65,7 +65,7 @@ const fundingClass = (s: string) =>
             <input
               type="search"
               data-search-input
-              placeholder="Search by program, institution, or city"
+              placeholder="Search by program, institution, or keyword"
               aria-label="Search programs"
             />
             <button class="clear-search" data-search-clear>Clear</button>
@@ -88,7 +88,7 @@ const fundingClass = (s: string) =>
                   <tr
                     class="row"
                     data-name={p.name}
-                    data-search={[p.name, p.institution, p.location, ...p.specializations].join(" ").toLowerCase()}
+                    data-search={[p.name, p.institution, p.location, p.degree, ...p.specializations, p.notes].join(" ").toLowerCase()}
                     data-degree={p.degree}
                     data-specialization={p.specializations.join("|")}
                     data-region={p.regions.join("|")}
@@ -152,7 +152,7 @@ const fundingClass = (s: string) =>
             <span class="showing">
               Showing <b data-showing>{programs.length}</b> of {programs.length} programs
             </span>
-            <span>Audio Directory · Verified records only</span>
+            <span>Audio Directory</span>
           </footer>
         </section>
       </div>

@@ -65,7 +65,7 @@ const sectorCount = facets.sector.length;
             <input
               type="search"
               data-search-input
-              placeholder="Search by company, sector, or city"
+              placeholder="Search by company, sector, role, or keyword"
               aria-label="Search employers"
             />
             <button class="clear-search" data-search-clear>Clear</button>
@@ -87,7 +87,7 @@ const sectorCount = facets.sector.length;
                   <tr
                     class="row"
                     data-name={e.name}
-                    data-search={[e.name, e.headquarters, ...e.sectors].join(" ").toLowerCase()}
+                    data-search={[e.name, e.headquarters, ...e.sectors, e.roles, e.notes].join(" ").toLowerCase()}
                     data-sector={e.sectors.join("|")}
                     data-size={e.size}
                     data-geography={e.geography.join("|")}
@@ -153,7 +153,7 @@ const sectorCount = facets.sector.length;
             <span class="showing">
               Showing <b data-showing>{employers.length}</b> of {employers.length} employers
             </span>
-            <span>Audio Directory · Verified records only</span>
+            <span>Audio Directory</span>
           </footer>
         </section>
       </div>

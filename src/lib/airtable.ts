@@ -11,9 +11,14 @@
 
 import { readFileSync } from "node:fs";
 
-const TOKEN = import.meta.env.AIRTABLE_TOKEN as string | undefined;
+// Read from import.meta.env (Vite loads .env files locally) AND process.env
+// (CI/host env vars, e.g. Netlify, which Vite does not surface on import.meta.env).
+const TOKEN =
+  (import.meta.env.AIRTABLE_TOKEN as string | undefined) ?? process.env.AIRTABLE_TOKEN;
 const BASE_ID =
-  (import.meta.env.AIRTABLE_BASE_ID as string | undefined) ?? "appyqRTTdm4p0Ze0P";
+  (import.meta.env.AIRTABLE_BASE_ID as string | undefined) ??
+  process.env.AIRTABLE_BASE_ID ??
+  "appyqRTTdm4p0Ze0P";
 
 const API = "https://api.airtable.com/v0";
 
