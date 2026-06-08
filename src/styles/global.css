@@ -184,6 +184,27 @@ a {
   padding: 0;
 }
 
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Filters collapse toggle — only shown on small screens. */
+.filters-toggle {
+  display: none;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: var(--r);
+  cursor: pointer;
+}
+
 .facet {
   border-bottom: 1px solid var(--line-2);
   padding: 12px 18px 14px;
@@ -728,4 +749,93 @@ table.dir tbody tr.row {
   font-size: 13px;
   color: var(--accent);
   white-space: pre-wrap;
+}
+
+/* ============================================================
+   Responsive — placed last so these override the base rules.
+   ============================================================ */
+
+@media (max-width: 860px) {
+  .shell {
+    border-left: none;
+    border-right: none;
+  }
+
+  /* Filters collapse behind a Show/Hide toggle; header stays visible. */
+  .filters-toggle {
+    display: inline-block;
+  }
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--ink);
+  }
+  .sidebar .facet {
+    display: none;
+  }
+  .sidebar.is-open .facet {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Top bar stacks: brand on its own row, tabs split below it. */
+  .topbar {
+    position: static;
+    flex-wrap: wrap;
+  }
+  .brand {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .tabs {
+    width: 100%;
+  }
+  .tab {
+    flex: 1;
+    justify-content: center;
+    padding: 12px 0;
+  }
+
+  /* Main header stacks. */
+  .main-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 18px 16px 14px;
+  }
+  .main-head .stat {
+    text-align: left;
+  }
+  .main-head .count-big {
+    font-size: 34px;
+  }
+
+  .searchbar {
+    padding: 10px 16px;
+  }
+
+  /* Drop low-priority columns; everything is still in the detail panel. */
+  .col-hide-sm {
+    display: none;
+  }
+  table.dir thead th,
+  table.dir tbody td {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 14px 16px;
+  }
+
+  /* Detail panel takes the full width. */
+  .detail-card {
+    width: 100%;
+    max-width: 100%;
+    border-left: none;
+  }
 }

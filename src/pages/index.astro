@@ -36,7 +36,10 @@ const sectorCount = facets.sector.length;
         <aside class="sidebar">
           <div class="sidebar-head">
             <h2>Filters</h2>
-            <button class="reset" data-reset>Reset all</button>
+            <div class="sidebar-actions">
+              <button class="reset" data-reset>Reset all</button>
+              <button class="filters-toggle" data-filters-toggle aria-expanded="false">Show</button>
+            </div>
           </div>
           <FacetGroup title="Sector" dim="sector" options={facets.sector} />
           <FacetGroup title="Company size" dim="size" options={facets.size} />
@@ -74,8 +77,8 @@ const sectorCount = facets.sector.length;
                   <th class="col-rank">#</th>
                   <th>Company / Sector</th>
                   <th>Headquarters</th>
-                  <th>Size</th>
-                  <th>Geography</th>
+                  <th class="col-hide-sm">Size</th>
+                  <th class="col-hide-sm">Geography</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,8 +129,8 @@ const sectorCount = facets.sector.length;
                       </div>
                     </td>
                     <td class="hq">{e.headquarters || "—"}</td>
-                    <td>{e.size ? <span class={`badge ${sizeClass(e.size)}`}>{e.size}</span> : "—"}</td>
-                    <td>
+                    <td class="col-hide-sm">{e.size ? <span class={`badge ${sizeClass(e.size)}`}>{e.size}</span> : "—"}</td>
+                    <td class="col-hide-sm">
                       <span class="geo">
                         {e.geography.length
                           ? e.geography.map((g) => <span class="badge">{g}</span>)

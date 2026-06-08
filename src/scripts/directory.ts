@@ -28,6 +28,8 @@ function setup(root: ParentNode = document) {
   const searchBar = root.querySelector<HTMLElement>("[data-searchbar]");
   const searchInput = root.querySelector<HTMLInputElement>("[data-search-input]");
   const searchClear = root.querySelector<HTMLButtonElement>("[data-search-clear]");
+  const filtersToggle = root.querySelector<HTMLButtonElement>("[data-filters-toggle]");
+  const sidebar = root.querySelector<HTMLElement>(".sidebar");
 
   // Parse each row's values per dimension into Sets.
   const parsed = rows.map((el) => {
@@ -130,6 +132,13 @@ function setup(root: ParentNode = document) {
     checkboxes.forEach((cb) => (cb.checked = false));
     if (searchInput) searchInput.value = "";
     apply();
+  });
+
+  // Mobile: collapse the filter sidebar behind a Show/Hide toggle.
+  filtersToggle?.addEventListener("click", () => {
+    const open = sidebar?.classList.toggle("is-open") ?? false;
+    filtersToggle.setAttribute("aria-expanded", String(open));
+    filtersToggle.textContent = open ? "Hide" : "Show";
   });
 
   setupDetailPanel(root, rows);
