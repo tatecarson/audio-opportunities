@@ -58,6 +58,17 @@ const fundingClass = (s: string) =>
             </div>
           </div>
 
+          <div class="searchbar" data-searchbar>
+            <span class="glyph">⌕</span>
+            <input
+              type="search"
+              data-search-input
+              placeholder="Search by program, institution, or city"
+              aria-label="Search programs"
+            />
+            <button class="clear-search" data-search-clear>Clear</button>
+          </div>
+
           <div class="table-wrap">
             <table class="dir" data-dims="degree,specialization,region,funding">
               <thead>
@@ -75,6 +86,7 @@ const fundingClass = (s: string) =>
                   <tr
                     class="row"
                     data-name={p.name}
+                    data-search={[p.name, p.institution, p.location, ...p.specializations].join(" ").toLowerCase()}
                     data-degree={p.degree}
                     data-specialization={p.specializations.join("|")}
                     data-region={p.regions.join("|")}
