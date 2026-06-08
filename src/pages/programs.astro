@@ -35,7 +35,10 @@ const fundingClass = (s: string) =>
         <aside class="sidebar">
           <div class="sidebar-head">
             <h2>Filters</h2>
-            <button class="reset" data-reset>Reset all</button>
+            <div class="sidebar-actions">
+              <button class="reset" data-reset>Reset all</button>
+              <button class="filters-toggle" data-filters-toggle aria-expanded="false">Show</button>
+            </div>
           </div>
           <FacetGroup title="Degree type" dim="degree" options={facets.degree} />
           <FacetGroup title="Specialization" dim="specialization" options={facets.specialization} />
@@ -73,9 +76,9 @@ const fundingClass = (s: string) =>
                 <tr>
                   <th class="col-rank">#</th>
                   <th>Program / Institution</th>
-                  <th>Location</th>
+                  <th class="col-hide-sm">Location</th>
                   <th>Degree</th>
-                  <th>Funding</th>
+                  <th class="col-hide-sm">Funding</th>
                   <th>Deadline</th>
                 </tr>
               </thead>
@@ -130,9 +133,9 @@ const fundingClass = (s: string) =>
                         </span>
                       </div>
                     </td>
-                    <td class="hq">{p.location || "—"}</td>
+                    <td class="hq col-hide-sm">{p.location || "—"}</td>
                     <td>{p.degree ? <span class="badge">{p.degree}</span> : "—"}</td>
-                    <td>{p.funding ? <span class={`badge ${fundingClass(p.funding)}`}>{p.funding}</span> : "—"}</td>
+                    <td class="col-hide-sm">{p.funding ? <span class={`badge ${fundingClass(p.funding)}`}>{p.funding}</span> : "—"}</td>
                     <td class="hq">{p.deadline || "—"}</td>
                   </tr>
                 ))}
