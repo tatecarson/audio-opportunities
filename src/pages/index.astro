@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Topbar from "../components/Topbar.astro";
 import FacetGroup from "../components/FacetGroup.astro";
+import DetailPanel from "../components/DetailPanel.astro";
 import { getEmployers, getPrograms, type Employer } from "../lib/airtable";
 
 let employers: Employer[] = [];
@@ -30,6 +31,7 @@ const sectorCount = facets.sector.length;
     error ? (
       <div class="build-error">Could not load Airtable data.{"\n\n"}{error}</div>
     ) : (
+      <>
       <div class="body-grid">
         <aside class="sidebar">
           <div class="sidebar-head">
@@ -77,6 +79,23 @@ const sectorCount = facets.sector.length;
                     data-sector={e.sectors.join("|")}
                     data-size={e.size}
                     data-geography={e.geography.join("|")}
+                    data-detail={JSON.stringify({
+                      title: e.name,
+                      initials: e.initials,
+                      url: e.careerUrl,
+                      urlLabel: "Careers page ↗",
+                      fields: {
+                        Sector: e.sectors.join(", "),
+                        Headquarters: e.headquarters,
+                        "Company size": e.size,
+                        "Hiring geography": e.geography.join(", "),
+                        "Internship program": e.internship,
+                        "Entry-level roles": e.roles,
+                        "Handshake status": e.handshake,
+                        Notes: e.notes,
+                        "Last verified": e.lastVerified,
+                      },
+                    })}
                   >
                     <td class="col-rank">{String(i + 1).padStart(2, "0")}</td>
                     <td>
@@ -126,6 +145,8 @@ const sectorCount = facets.sector.length;
           </footer>
         </section>
       </div>
+      <DetailPanel />
+      </>
     )
   }
 </Base>

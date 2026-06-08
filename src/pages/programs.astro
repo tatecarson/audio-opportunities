@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Topbar from "../components/Topbar.astro";
 import FacetGroup from "../components/FacetGroup.astro";
+import DetailPanel from "../components/DetailPanel.astro";
 import { getEmployers, getPrograms, type Program } from "../lib/airtable";
 
 let programs: Program[] = [];
@@ -29,6 +30,7 @@ const fundingClass = (s: string) =>
     error ? (
       <div class="build-error">Could not load Airtable data.{"\n\n"}{error}</div>
     ) : (
+      <>
       <div class="body-grid">
         <aside class="sidebar">
           <div class="sidebar-head">
@@ -79,6 +81,24 @@ const fundingClass = (s: string) =>
                     data-specialization={p.specializations.join("|")}
                     data-region={p.regions.join("|")}
                     data-funding={p.funding}
+                    data-detail={JSON.stringify({
+                      title: p.name,
+                      initials: p.initials,
+                      url: p.url,
+                      urlLabel: "Program page ↗",
+                      fields: {
+                        Institution: p.institution,
+                        Location: p.location,
+                        Degree: p.degree,
+                        Specialization: p.specializations.join(", "),
+                        Duration: p.duration,
+                        Funding: p.funding,
+                        "Application deadline": p.deadline,
+                        Region: p.regions.join(", "),
+                        Notes: p.notes,
+                        "Last verified": p.lastVerified,
+                      },
+                    })}
                   >
                     <td class="col-rank">{String(i + 1).padStart(2, "0")}</td>
                     <td>
@@ -124,6 +144,8 @@ const fundingClass = (s: string) =>
           </footer>
         </section>
       </div>
+      <DetailPanel />
+      </>
     )
   }
 </Base>

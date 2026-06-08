@@ -1,0 +1,19 @@
+---
+// Static markup for the row-detail sidebar. Populated client-side from each
+// row's data-detail payload by src/scripts/directory.ts.
+---
+
+<aside class="detail" data-detail-panel hidden>
+  <div class="detail-scrim" data-detail-close></div>
+  <div class="detail-card" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1">
+    <div class="detail-head">
+      <span class="avatar" data-detail-avatar></span>
+      <div class="detail-titles">
+        <h2 id="detail-title" data-detail-title></h2>
+        <a class="detail-link" data-detail-link target="_blank" rel="noopener" hidden></a>
+      </div>
+      <button class="detail-x" data-detail-close aria-label="Close detail">×</button>
+    </div>
+    <dl class="detail-body" data-detail-body></dl>
+  </div>
+</aside>
