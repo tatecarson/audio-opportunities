@@ -349,6 +349,16 @@ a {
   background: var(--card);
 }
 
+/* The bare input drops its own outline; surface the focus cue on the row
+   instead so keyboard users get a clear, on-brand indicator (WCAG 2.4.7). */
+.searchbar:focus-within {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.searchbar:focus-within .glyph {
+  color: var(--accent);
+}
+
 .searchbar .glyph {
   font-family: var(--mono);
   font-size: 13px;
