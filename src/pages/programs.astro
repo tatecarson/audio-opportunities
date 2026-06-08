@@ -1,0 +1,133 @@
+---
+import Base from "../layouts/Base.astro";
+import Topbar from "../components/Topbar.astro";
+import FacetGroup from "../components/FacetGroup.astro";
+import { getEmployers, getPrograms, type Program } from "../lib/airtable";
+
+let programs: Program[] = [];
+let facets = { degree: [] as any[], specialization: [] as any[], region: [] as any[], funding: [] as any[] };
+let employerCount = 0;
+let error: string | null = null;
+
+try {
+  const data = await getPrograms();
+  programs = data.programs;
+  facets = data.facets;
+  employerCount = (await getEmployers()).employers.length;
+} catch (e) {
+  error = e instanceof Error ? e.message : String(e);
+}
+
+const fundingClass = (s: string) =>
+  /full|funded|stipend/i.test(s) ? "size-s" : /partial|some/i.test(s) ? "size-m" : "size-l";
+---
+
+<Base title="Audio Directory — Graduate Programs">
+  <Topbar active="programs" employerCount={employerCount} programCount={programs.length} />
+
+  {
+    error ? (
+      <div class="build-error">Could not load Airtable data.{"\n\n"}{error}</div>
+    ) : (
+      <div class="body-grid">
+        <aside class="sidebar">
+          <div class="sidebar-head">
+            <h2>Filters</h2>
+            <button class="reset" data-reset>Reset all</button>
+          </div>
+          <FacetGroup title="Degree type" dim="degree" options={facets.degree} />
+          <FacetGroup title="Specialization" dim="specialization" options={facets.specialization} />
+          <FacetGroup title="Region" dim="region" options={facets.region} />
+          <FacetGroup title="Funding" dim="funding" options={facets.funding} />
+        </aside>
+
+        <section class="main">
+          <div class="main-head">
+            <div>
+              <div class="count-big">{programs.length}</div>
+              <h1>Graduate programs</h1>
+              <div class="sub">MA · MM · MFA · MS · PhD &amp; certificates in audio / sound</div>
+              <div class="sort-toggle">
+                <button data-sort="count" aria-pressed="true">Default</button>
+                <button data-sort="az" aria-pressed="false">A–Z</button>
+              </div>
+            </div>
+            <div class="stat">
+              <b>{facets.degree.length}</b>
+              degree types
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="dir" data-dims="degree,specialization,region,funding">
+              <thead>
+                <tr>
+                  <th class="col-rank">#</th>
+                  <th>Program / Institution</th>
+                  <th>Location</th>
+                  <th>Degree</th>
+                  <th>Funding</th>
+                  <th>Deadline</th>
+                </tr>
+              </thead>
+              <tbody>
+                {programs.map((p, i) => (
+                  <tr
+                    class="row"
+                    data-name={p.name}
+                    data-degree={p.degree}
+                    data-specialization={p.specializations.join("|")}
+                    data-region={p.regions.join("|")}
+                    data-funding={p.funding}
+                  >
+                    <td class="col-rank">{String(i + 1).padStart(2, "0")}</td>
+                    <td>
+                      <div class="cell-co">
+                        <span class="avatar">{p.initials}</span>
+                        <span>
+                          <span class="co-name">
+                            {p.url ? (
+                              <a href={p.url} target="_blank" rel="noopener">
+                                {p.name}
+                              </a>
+                            ) : (
+                              p.name
+                            )}
+                          </span>
+                          <span class="tags">
+                            <span class="tag">{p.institution}</span>
+                            {p.specializations.map((s) => (
+                              <span class="tag">{s}</span>
+                            ))}
+                          </span>
+                        </span>
+                      </div>
+                    </td>
+                    <td class="hq">{p.location || "—"}</td>
+                    <td>{p.degree ? <span class="badge">{p.degree}</span> : "—"}</td>
+                    <td>{p.funding ? <span class={`badge ${fundingClass(p.funding)}`}>{p.funding}</span> : "—"}</td>
+                    <td class="hq">{p.deadline || "—"}</td>
+                  </tr>
+                ))}
+                <tr class="empty-row row-hidden">
+                  <td colspan="6">No programs match the current filters.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <footer class="foot">
+            <span class="showing">
+              Showing <b data-showing>{programs.length}</b> of {programs.length} programs
+            </span>
+            <span>Audio Directory · Verified records only</span>
+          </footer>
+        </section>
+      </div>
+    )
+  }
+</Base>
+
+<script>
+  import "../scripts/directory.ts";
+</script>

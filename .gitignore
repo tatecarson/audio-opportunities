@@ -1,5 +1,20 @@
-
 # Beads / Dolt files (added by bd init)
 .dolt/
 *.db
 .beads-credential-key
+
+# build output
+dist/
+# generated types
+.astro/
+# dependencies
+node_modules/
+# secrets & env
+.env
+.env.production
+# local offline dev fallback (regenerate from live Airtable)
+src/data/snapshot.json
+# logs
+npm-debug.log*
+# macOS
+.DS_Store
