@@ -1,0 +1,11 @@
+# Netlify build configuration for the Astro static site.
+# Without this (and with no build command set in the Netlify UI), deploys error
+# because Netlify has no publish directory to deploy.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Astro 6 needs a modern Node; match package.json "engines".
+  NODE_VERSION = "22.12.0"
