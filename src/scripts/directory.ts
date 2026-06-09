@@ -153,7 +153,7 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
   const card = panel.querySelector<HTMLElement>(".detail-card");
   const avatarEl = panel.querySelector<HTMLElement>("[data-detail-avatar]");
   const titleEl = panel.querySelector<HTMLElement>("[data-detail-title]");
-  const linkEl = panel.querySelector<HTMLAnchorElement>("[data-detail-link]");
+  const linkSlot = panel.querySelector<HTMLElement>("[data-detail-link-slot]");
   const bodyEl = panel.querySelector<HTMLElement>("[data-detail-body]");
   const prevBtn = panel.querySelector<HTMLButtonElement>("[data-detail-prev]");
   const nextBtn = panel.querySelector<HTMLButtonElement>("[data-detail-next]");
@@ -189,6 +189,7 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
     url?: string;
     urlLabel?: string;
     fields: Record<string, string>;
+    minors?: { name: string; why: string; url: string }[];
   }
 
   function open(row: HTMLTableRowElement) {
@@ -203,13 +204,16 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
 
     if (avatarEl) avatarEl.textContent = data.initials ?? "";
     if (titleEl) titleEl.textContent = data.title ?? "";
-    if (linkEl) {
+    if (linkSlot) {
+      linkSlot.replaceChildren();
       if (data.url) {
+        const linkEl = document.createElement("a");
+        linkEl.className = "detail-link";
         linkEl.href = data.url;
         linkEl.textContent = data.urlLabel ?? "Visit ↗";
-        linkEl.hidden = false;
-      } else {
-        linkEl.hidden = true;
+        linkEl.target = "_blank";
+        linkEl.rel = "noopener";
+        linkSlot.append(linkEl);
       }
     }
 
@@ -223,6 +227,38 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
       const dd = document.createElement("dd");
       dd.textContent = value;
       wrap.append(dt, dd);
+      bodyEl.append(wrap);
+    }
+
+    // Suggested DSU minors for this employer's field(s). Omitted when none.
+    if (data.minors && data.minors.length) {
+      const wrap = document.createElement("div");
+      wrap.className = "field field-minors";
+      const dt = document.createElement("dt");
+      dt.textContent = "Suggested DSU minors";
+      const ul = document.createElement("ul");
+      ul.className = "minors-list";
+      for (const m of data.minors) {
+        const li = document.createElement("li");
+        if (m.url && m.url.trim() !== "") {
+          const a = document.createElement("a");
+          a.href = m.url;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = m.name;
+          li.append(a);
+        } else {
+          li.textContent = m.name;
+        }
+        if (m.why) {
+          const span = document.createElement("span");
+          span.className = "minor-why";
+          span.textContent = m.why;
+          li.append(span);
+        }
+        ul.append(li);
+      }
+      wrap.append(dt, ul);
       bodyEl.append(wrap);
     }
 
