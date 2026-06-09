@@ -189,6 +189,7 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
     url?: string;
     urlLabel?: string;
     fields: Record<string, string>;
+    minors?: { name: string; why: string; url: string }[];
   }
 
   function open(row: HTMLTableRowElement) {
@@ -223,6 +224,34 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
       const dd = document.createElement("dd");
       dd.textContent = value;
       wrap.append(dt, dd);
+      bodyEl.append(wrap);
+    }
+
+    // Suggested DSU minors for this employer's field(s). Omitted when none.
+    if (data.minors && data.minors.length) {
+      const wrap = document.createElement("div");
+      wrap.className = "field field-minors";
+      const dt = document.createElement("dt");
+      dt.textContent = "Suggested DSU minors";
+      const ul = document.createElement("ul");
+      ul.className = "minors-list";
+      for (const m of data.minors) {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = m.url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = m.name;
+        li.append(a);
+        if (m.why) {
+          const span = document.createElement("span");
+          span.className = "minor-why";
+          span.textContent = m.why;
+          li.append(span);
+        }
+        ul.append(li);
+      }
+      wrap.append(dt, ul);
       bodyEl.append(wrap);
     }
 

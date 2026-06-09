@@ -743,6 +743,41 @@ table.dir tbody tr.row {
   white-space: pre-wrap;
 }
 
+/* ---- suggested minors ---- */
+.minors-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.minors-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.minors-list a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink-40);
+  align-self: flex-start;
+}
+
+.minors-list a:hover {
+  border-bottom-color: var(--ink);
+}
+
+.minor-why {
+  font-size: 12px;
+  color: var(--ink-40);
+  line-height: 1.45;
+}
+
 /* ---- footer ---- */
 .foot {
   display: flex;

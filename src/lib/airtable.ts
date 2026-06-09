@@ -117,6 +117,21 @@ export interface Employer {
   handshake: string;
   notes: string;
   lastVerified: string;
+  /** DSU minors suggested for this employer's sector(s), deduped + sorted. */
+  minors: MinorSuggestion[];
+}
+
+/** A minor as shown to students (no sector/gate metadata). */
+export interface MinorSuggestion {
+  name: string;
+  why: string;
+  url: string;
+}
+
+/** A row from the Minors table. */
+export interface Minor extends MinorSuggestion {
+  sectors: string[];
+  lastVerified: string;
 }
 
 export interface Program {
@@ -157,22 +172,77 @@ function buildFacet(rows: { [k: string]: unknown }[], key: string): Facet[] {
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 }
 
+/**
+ * Verified minors (Last Verified set), one row per minor. Never throws — a
+ * missing/empty Minors table just yields no suggestions, so employers still
+ * render.
+ */
+export async function getMinors(): Promise<Minor[]> {
+  let records: AirtableRecord[];
+  try {
+    records = await fetchTable("Minors");
+  } catch {
+    return [];
+  }
+  return records
+    .filter((r) => name(r.fields["Last Verified"]))
+    .map((r) => {
+      const f = r.fields;
+      return {
+        name: name(f["Minor Name"]) || "Untitled",
+        sectors: names(f["Relevant Sectors"]),
+        why: name(f["Why It Helps"]),
+        url: name(f["Catalog URL"]),
+        lastVerified: name(f["Last Verified"]),
+      };
+    });
+}
+
+/** Index minors by the sector names they apply to. */
+function indexMinorsBySector(minors: Minor[]): Map<string, Minor[]> {
+  const bySector = new Map<string, Minor[]>();
+  for (const m of minors) {
+    for (const s of m.sectors) {
+      const arr = bySector.get(s) ?? [];
+      arr.push(m);
+      bySector.set(s, arr);
+    }
+  }
+  return bySector;
+}
+
+/** Minors for an employer = union over its sectors, deduped by name, sorted. */
+function minorsForSectors(sectors: string[], bySector: Map<string, Minor[]>): MinorSuggestion[] {
+  const seen = new Set<string>();
+  const out: MinorSuggestion[] = [];
+  for (const s of sectors) {
+    for (const m of bySector.get(s) ?? []) {
+      if (seen.has(m.name)) continue;
+      seen.add(m.name);
+      out.push({ name: m.name, why: m.why, url: m.url });
+    }
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export async function getEmployers(): Promise<{
   employers: Employer[];
   facets: { sector: Facet[]; size: Facet[]; geography: Facet[] };
 }> {
   const records = await fetchTable("Employers");
+  const minorsBySector = indexMinorsBySector(await getMinors());
 
   const employers: Employer[] = records
     .filter((r) => name(r.fields["Last Verified"]))
     .map((r) => {
       const f = r.fields;
       const nm = name(f["Name"]) || "Untitled";
+      const sectors = names(f["Sector"]);
       return {
         id: r.id,
         name: nm,
         initials: initials(nm),
-        sectors: names(f["Sector"]),
+        sectors,
         headquarters: name(f["Headquarters"]),
         geography: names(f["Hiring Geography"]),
         size: name(f["Company Size"]),
@@ -182,6 +252,7 @@ export async function getEmployers(): Promise<{
         handshake: name(f["Handshake Status"]),
         notes: name(f["Notes"]),
         lastVerified: name(f["Last Verified"]),
+        minors: minorsForSectors(sectors, minorsBySector),
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
