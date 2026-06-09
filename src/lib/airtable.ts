@@ -10,6 +10,7 @@
  */
 
 import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 // Read from import.meta.env (Vite loads .env files locally) AND process.env
 // (CI/host env vars, e.g. Netlify, which Vite does not surface on import.meta.env).
@@ -28,8 +29,9 @@ const API = "https://api.airtable.com/v0";
  * ignored) so the UI still renders during local development / CI without secrets.
  */
 function loadSnapshot(table: string): AirtableRecord[] {
-  const url = new URL("../data/snapshot.json", import.meta.url);
-  const snap = JSON.parse(readFileSync(url, "utf-8")) as Record<string, AirtableRecord[]>;
+  const snap = JSON.parse(
+    readFileSync(join(process.cwd(), "src/data/snapshot.json"), "utf-8"),
+  ) as Record<string, AirtableRecord[]>;
   const rows = snap[table];
   if (!rows) throw new Error(`Snapshot has no table "${table}".`);
   return rows;

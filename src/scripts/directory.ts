@@ -153,7 +153,7 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
   const card = panel.querySelector<HTMLElement>(".detail-card");
   const avatarEl = panel.querySelector<HTMLElement>("[data-detail-avatar]");
   const titleEl = panel.querySelector<HTMLElement>("[data-detail-title]");
-  const linkEl = panel.querySelector<HTMLAnchorElement>("[data-detail-link]");
+  const linkSlot = panel.querySelector<HTMLElement>("[data-detail-link-slot]");
   const bodyEl = panel.querySelector<HTMLElement>("[data-detail-body]");
   const prevBtn = panel.querySelector<HTMLButtonElement>("[data-detail-prev]");
   const nextBtn = panel.querySelector<HTMLButtonElement>("[data-detail-next]");
@@ -204,13 +204,16 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
 
     if (avatarEl) avatarEl.textContent = data.initials ?? "";
     if (titleEl) titleEl.textContent = data.title ?? "";
-    if (linkEl) {
+    if (linkSlot) {
+      linkSlot.replaceChildren();
       if (data.url) {
+        const linkEl = document.createElement("a");
+        linkEl.className = "detail-link";
         linkEl.href = data.url;
         linkEl.textContent = data.urlLabel ?? "Visit ↗";
-        linkEl.hidden = false;
-      } else {
-        linkEl.hidden = true;
+        linkEl.target = "_blank";
+        linkEl.rel = "noopener";
+        linkSlot.append(linkEl);
       }
     }
 

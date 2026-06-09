@@ -5,18 +5,18 @@
 :root {
   --ink: #14130f;
   --ink-60: #5c5a52;
-  --ink-40: #8a877d;
+  --ink-40: #6f6b63;
   --line: #d9d6cc;
   --line-2: #e9e7df;
   --paper: #f4f2ea;
   --card: #ffffff;
-  --accent: #d6451f; /* trade orange */
+  --accent: #c83a18; /* trade orange */
   --accent-soft: #f6e4dc;
   --ok: #2f6f3e;
   --ok-soft: #e2efe2;
 
   --mono: "Berkeley Mono", ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
-  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --sans: "Avenir Next", "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
   --r: 2px;
 }
@@ -96,7 +96,7 @@ a {
 
 .brand-sub {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-40);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -128,7 +128,7 @@ a {
 }
 
 .tab .count {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-40);
 }
 
@@ -166,7 +166,7 @@ a {
 .sidebar-head h2 {
   margin: 0;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--ink);
@@ -176,7 +176,7 @@ a {
   background: none;
   border: none;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--accent);
@@ -197,7 +197,7 @@ a {
   color: #fff;
   border: none;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 4px 10px;
@@ -212,7 +212,7 @@ a {
 
 .facet-title {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--ink-40);
@@ -262,7 +262,7 @@ a {
 
 .facet-opt .n {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-40);
 }
 
@@ -307,7 +307,7 @@ a {
 .main-head .stat {
   text-align: right;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-40);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -341,7 +341,7 @@ a {
 .scope-note a {
   flex: none;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -394,7 +394,7 @@ a {
   color: var(--ink-40);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .searchbar .clear-search {
@@ -402,7 +402,7 @@ a {
   background: var(--card);
   border-radius: var(--r);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-60);
   padding: 3px 8px;
   cursor: pointer;
@@ -430,7 +430,7 @@ table.dir thead th {
   background: var(--paper);
   text-align: left;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--ink-40);
@@ -452,7 +452,7 @@ table.dir tbody tr:hover {
 
 .col-rank {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-40);
   width: 36px;
   text-align: right;
@@ -473,7 +473,7 @@ table.dir tbody tr:hover {
   background: var(--ink);
   color: #fff;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   border-radius: var(--r);
   letter-spacing: 0.02em;
@@ -502,7 +502,7 @@ table.dir tbody tr:hover {
 
 .tag {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--ink-60);
@@ -519,7 +519,7 @@ table.dir tbody tr:hover {
 .badge {
   display: inline-block;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 8px;
   border-radius: 2px;
   border: 1px solid var(--line);
@@ -549,7 +549,7 @@ table.dir tbody tr:hover {
 }
 
 .geo .badge {
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--ink-60);
@@ -649,7 +649,7 @@ table.dir tbody tr.row {
   display: inline-block;
   margin-top: 4px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--accent);
@@ -687,7 +687,7 @@ table.dir tbody tr.row {
 
 .detail-pos {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--ink-40);
   white-space: nowrap;
   margin-right: 2px;
@@ -728,7 +728,7 @@ table.dir tbody tr.row {
 
 .detail-body dt {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--ink-40);
@@ -786,7 +786,7 @@ table.dir tbody tr.row {
   padding: 14px 24px;
   border-top: 1px solid var(--ink);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-40);
   text-transform: uppercase;
   letter-spacing: 0.08em;
