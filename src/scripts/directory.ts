@@ -237,12 +237,16 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
       ul.className = "minors-list";
       for (const m of data.minors) {
         const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.href = m.url;
-        a.target = "_blank";
-        a.rel = "noopener";
-        a.textContent = m.name;
-        li.append(a);
+        if (m.url && m.url.trim() !== "") {
+          const a = document.createElement("a");
+          a.href = m.url;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = m.name;
+          li.append(a);
+        } else {
+          li.textContent = m.name;
+        }
         if (m.why) {
           const span = document.createElement("span");
           span.className = "minor-why";

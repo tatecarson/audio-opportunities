@@ -186,13 +186,15 @@ export async function getMinors(): Promise<Minor[]> {
   }
   return records
     .filter((r) => name(r.fields["Last Verified"]))
-    .map((r) => {
+    .flatMap((r) => {
       const f = r.fields;
+      const url = name(f["Catalog URL"]);
+      if (!url) return [];
       return {
         name: name(f["Minor Name"]) || "Untitled",
         sectors: names(f["Relevant Sectors"]),
         why: name(f["Why It Helps"]),
-        url: name(f["Catalog URL"]),
+        url,
         lastVerified: name(f["Last Verified"]),
       };
     });
