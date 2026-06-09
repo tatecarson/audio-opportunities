@@ -21,6 +21,8 @@ try {
 
 const fundingClass = (s: string) =>
   /full|funded|stipend/i.test(s) ? "size-s" : /partial|some/i.test(s) ? "size-m" : "size-l";
+const feedbackHref =
+  "mailto:tate.carson@dsu.edu?subject=Audio%20Directory%20addition%20or%20correction&body=What%20should%20be%20added%20or%20corrected%3F%0A%0AName%3A%0ALink%3A%0AWhat%20changed%3A%0ASource%20or%20context%3A";
 ---
 
 <Base title="Audio Directory — Graduate Programs">
@@ -57,6 +59,13 @@ const fundingClass = (s: string) =>
               <b>{facets.degree.length}</b>
               degree types
             </div>
+          </div>
+
+          <div class="scope-note">
+            <p>
+              Built mainly for Digital Sound Design students at Dakota State University; anyone exploring audio careers is welcome to use it.
+            </p>
+            <a href={feedbackHref}>Suggest an addition or correction ↗</a>
           </div>
 
           <div class="searchbar" data-searchbar>
@@ -150,8 +159,8 @@ const fundingClass = (s: string) =>
             <span class="showing">
               Showing <b data-showing>{programs.length}</b> of {programs.length} programs
             </span>
-            <a class="foot-link" href="mailto:tate.carson@dsu.edu?subject=Audio%20Directory%20feedback">
-              Something off, or a program to add? Email me ↗
+            <a class="foot-link" href={feedbackHref}>
+              Suggest an addition or correction ↗
             </a>
           </footer>
         </section>

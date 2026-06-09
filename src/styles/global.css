@@ -320,6 +320,39 @@ a {
   letter-spacing: 0;
 }
 
+/* ---- scope / contribution note ---- */
+.scope-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--line);
+  background: #faf9f4;
+}
+
+.scope-note p {
+  margin: 0;
+  max-width: 760px;
+  color: var(--ink-60);
+  font-size: 12px;
+}
+
+.scope-note a {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.scope-note a:hover {
+  text-decoration: underline;
+}
+
 /* ---- search bar ---- */
 .searchbar {
   display: flex;
@@ -809,6 +842,17 @@ table.dir tbody tr.row {
   }
   .main-head .count-big {
     font-size: 34px;
+  }
+
+  .scope-note {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+    padding: 11px 16px;
+  }
+
+  .scope-note a {
+    white-space: normal;
   }
 
   .searchbar {

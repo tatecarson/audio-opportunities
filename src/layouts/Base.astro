@@ -6,8 +6,10 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "Verified employers and graduate programs for audio & sound design students." } =
-  Astro.props;
+const {
+  title,
+  description = "A directory of audio employers and graduate programs for Digital Sound Design students at Dakota State University and anyone exploring audio careers.",
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -18,6 +20,17 @@ const { title, description = "Verified employers and graduate programs for audio
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#d6451f" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="/og-image.png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
   </head>
