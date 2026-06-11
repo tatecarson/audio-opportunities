@@ -867,6 +867,15 @@ table.dir tbody tr.row {
   color: var(--ink);
 }
 
+.getting-in-sector-link {
+  text-decoration: none;
+}
+
+.getting-in-sector-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
 .path-badge {
   color: var(--accent);
   background: var(--accent-soft);
@@ -908,6 +917,15 @@ table.dir tbody tr.row {
 .getting-in-grad a:hover {
   color: var(--accent);
   border-color: var(--accent);
+}
+
+.related-match-chip {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-60);
+  background: var(--line-2);
+  border-radius: 2px;
+  padding: 2px 8px;
 }
 
 /* ---- footer ---- */
