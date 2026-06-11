@@ -163,6 +163,7 @@ export interface Program {
   url: string;
   notes: string;
   lastVerified: string;
+  relatedSectors: SectorGuidance[];
 }
 
 export interface Facet {
@@ -283,6 +284,24 @@ function guidanceForSectors(sectors: string[], bySector: Map<string, Sector>): S
   return out;
 }
 
+function guidanceForSpecializations(
+  specializations: string[],
+  sectors: Sector[],
+): SectorGuidance[] {
+  const matches: SectorGuidance[] = [];
+  for (const sector of sectors) {
+    const overlap = sector.gradSpecializations.filter((spec) => specializations.includes(spec));
+    if (!overlap.length) continue;
+    matches.push({
+      sector: sector.sector,
+      entryPath: sector.entryPath,
+      note: sector.note,
+      gradSpecializations: overlap.sort((a, b) => a.localeCompare(b)),
+    });
+  }
+  return matches.sort((a, b) => a.sector.localeCompare(b.sector));
+}
+
 export async function getEmployers(): Promise<{
   employers: Employer[];
   facets: { sector: Facet[]; size: Facet[]; geography: Facet[] };
@@ -333,12 +352,14 @@ export async function getPrograms(): Promise<{
   facets: { degree: Facet[]; specialization: Facet[]; region: Facet[]; funding: Facet[] };
 }> {
   const records = await fetchTable("Graduate Programs");
+  const sectors = await getSectors();
 
   const programs: Program[] = records
     .filter((r) => name(r.fields["Last Verified"]))
     .map((r) => {
       const f = r.fields;
       const nm = name(f["Program Name"]) || "Untitled";
+      const specializations = names(f["Specialization"]);
       return {
         id: r.id,
         name: nm,
@@ -346,7 +367,7 @@ export async function getPrograms(): Promise<{
         institution: name(f["Institution"]),
         location: name(f["Location"]),
         degree: name(f["Degree Type"]),
-        specializations: names(f["Specialization"]),
+        specializations,
         duration: name(f["Duration"]),
         funding: name(f["Funding"]),
         deadline: name(f["Application Deadline"]),
@@ -354,6 +375,7 @@ export async function getPrograms(): Promise<{
         url: name(f["Program URL"]),
         notes: name(f["Notes"]),
         lastVerified: name(f["Last Verified"]),
+        relatedSectors: guidanceForSpecializations(specializations, sectors),
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name));

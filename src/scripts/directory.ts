@@ -191,11 +191,16 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
     urlLabel?: string;
     fields: Record<string, string>;
     gettingIn?: { sector: string; entryPath: string; note: string; gradSpecializations: string[] }[];
+    relatedSectors?: { sector: string; entryPath: string; note: string; gradSpecializations: string[] }[];
     minors?: { name: string; why: string; url: string }[];
   }
 
   function specializationHref(specialization: string) {
     return `/programs?spec=${encodeURIComponent(specialization)}`;
+  }
+
+  function sectorHref(sector: string) {
+    return `/?sector=${encodeURIComponent(sector)}`;
   }
 
   function open(row: HTMLTableRowElement) {
@@ -282,6 +287,61 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
           }
 
           li.append(grad);
+        }
+
+        ul.append(li);
+      }
+      wrap.append(dt, ul);
+      bodyEl.append(wrap);
+    }
+
+    if (data.relatedSectors && data.relatedSectors.length) {
+      const wrap = document.createElement("div");
+      wrap.className = "field field-related-sectors";
+      const dt = document.createElement("dt");
+      dt.textContent = "Related job sectors";
+      const ul = document.createElement("ul");
+      ul.className = "getting-in-list";
+      for (const sectorInfo of data.relatedSectors) {
+        const li = document.createElement("li");
+
+        const top = document.createElement("div");
+        top.className = "getting-in-top";
+
+        const sectorLink = document.createElement("a");
+        sectorLink.className = "getting-in-sector getting-in-sector-link";
+        sectorLink.href = sectorHref(sectorInfo.sector);
+        sectorLink.textContent = sectorInfo.sector;
+
+        const path = document.createElement("span");
+        path.className = "badge path-badge";
+        path.textContent = sectorInfo.entryPath;
+        top.append(sectorLink, path);
+        li.append(top);
+
+        if (sectorInfo.note) {
+          const note = document.createElement("p");
+          note.className = "getting-in-note";
+          note.textContent = sectorInfo.note;
+          li.append(note);
+        }
+
+        if (sectorInfo.gradSpecializations.length) {
+          const basedOn = document.createElement("div");
+          basedOn.className = "getting-in-grad";
+          const label = document.createElement("span");
+          label.className = "getting-in-grad-label";
+          label.textContent = "Matched from";
+          basedOn.append(label);
+
+          for (const spec of sectorInfo.gradSpecializations) {
+            const chip = document.createElement("span");
+            chip.className = "related-match-chip";
+            chip.textContent = spec;
+            basedOn.append(chip);
+          }
+
+          li.append(basedOn);
         }
 
         ul.append(li);
@@ -401,19 +461,44 @@ function setupHelpModal(root: ParentNode) {
   });
 }
 
-function applySpecFilter(root: ParentNode = document) {
-  const table = root.querySelector<HTMLTableElement>('table.dir[data-dims*="specialization"]');
+function applyQueryFilters(root: ParentNode = document) {
+  const table = root.querySelector<HTMLTableElement>("table.dir[data-dims]");
   if (!table) return;
 
-  const spec = new URLSearchParams(window.location.search).get("spec");
-  if (!spec) return;
+  const dims = (table.dataset.dims ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  const params = new URLSearchParams(window.location.search);
+  const aliases: Record<string, string[]> = {
+    specialization: ["spec", "specialization"],
+    sector: ["sector"],
+    degree: ["degree"],
+    region: ["region"],
+    funding: ["funding"],
+    size: ["size"],
+    geography: ["geography"],
+  };
 
-  const checkbox = root.querySelector<HTMLInputElement>(
-    `input[type="checkbox"][data-facet="specialization"][value="${cssEscape(spec)}"]`,
-  );
-  if (checkbox) {
-    checkbox.checked = true;
-    checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+  let changed = false;
+  for (const dim of dims) {
+    const keys = aliases[dim] ?? [dim];
+    for (const key of keys) {
+      const value = params.get(key);
+      if (!value) continue;
+      const checkbox = root.querySelector<HTMLInputElement>(
+        `input[type="checkbox"][data-facet="${dim}"][value="${cssEscape(value)}"]`,
+      );
+      if (checkbox && !checkbox.checked) {
+        checkbox.checked = true;
+        changed = true;
+      }
+      break;
+    }
+  }
+
+  if (changed) {
+    table.dispatchEvent(new Event("filters:query-applied", { bubbles: true }));
+    root.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-facet]').forEach((cb) => {
+      if (cb.checked) cb.dispatchEvent(new Event("change", { bubbles: true }));
+    });
   }
 }
 
@@ -425,4 +510,4 @@ function cssEscape(value: string) {
 }
 
 setup();
-applySpecFilter();
+applyQueryFilters();
