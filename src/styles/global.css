@@ -527,6 +527,18 @@ table.dir tbody tr:hover {
   margin-top: 3px;
 }
 
+.institution-chip {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-40);
+  border: 1px solid var(--line);
+  background: transparent;
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
 .tag {
   font-family: var(--mono);
   font-size: 12px;
