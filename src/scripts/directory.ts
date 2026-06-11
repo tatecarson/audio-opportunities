@@ -189,7 +189,12 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
     url?: string;
     urlLabel?: string;
     fields: Record<string, string>;
+    gettingIn?: { sector: string; entryPath: string; note: string; gradSpecializations: string[] }[];
     minors?: { name: string; why: string; url: string }[];
+  }
+
+  function specializationHref(specialization: string) {
+    return `/programs?spec=${encodeURIComponent(specialization)}`;
   }
 
   function open(row: HTMLTableRowElement) {
@@ -227,6 +232,60 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
       const dd = document.createElement("dd");
       dd.textContent = value;
       wrap.append(dt, dd);
+      bodyEl.append(wrap);
+    }
+
+    if (data.gettingIn && data.gettingIn.length) {
+      const wrap = document.createElement("div");
+      wrap.className = "field field-getting-in";
+      const dt = document.createElement("dt");
+      dt.textContent = "Getting in";
+      const ul = document.createElement("ul");
+      ul.className = "getting-in-list";
+      for (const g of data.gettingIn) {
+        const li = document.createElement("li");
+
+        const top = document.createElement("div");
+        top.className = "getting-in-top";
+
+        const sector = document.createElement("span");
+        sector.className = "getting-in-sector";
+        sector.textContent = g.sector;
+
+        const path = document.createElement("span");
+        path.className = "badge path-badge";
+        path.textContent = g.entryPath;
+        top.append(sector, path);
+        li.append(top);
+
+        if (g.note) {
+          const note = document.createElement("p");
+          note.className = "getting-in-note";
+          note.textContent = g.note;
+          li.append(note);
+        }
+
+        if (g.gradSpecializations.length) {
+          const grad = document.createElement("div");
+          grad.className = "getting-in-grad";
+          const label = document.createElement("span");
+          label.className = "getting-in-grad-label";
+          label.textContent = "Grad paths";
+          grad.append(label);
+
+          for (const spec of g.gradSpecializations) {
+            const a = document.createElement("a");
+            a.href = specializationHref(spec);
+            a.textContent = spec;
+            grad.append(a);
+          }
+
+          li.append(grad);
+        }
+
+        ul.append(li);
+      }
+      wrap.append(dt, ul);
       bodyEl.append(wrap);
     }
 
@@ -311,4 +370,28 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
   });
 }
 
+function applySpecFilter(root: ParentNode = document) {
+  const table = root.querySelector<HTMLTableElement>('table.dir[data-dims*="specialization"]');
+  if (!table) return;
+
+  const spec = new URLSearchParams(window.location.search).get("spec");
+  if (!spec) return;
+
+  const checkbox = root.querySelector<HTMLInputElement>(
+    `input[type="checkbox"][data-facet="specialization"][value="${cssEscape(spec)}"]`,
+  );
+  if (checkbox) {
+    checkbox.checked = true;
+    checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+}
+
+function cssEscape(value: string) {
+  if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+    return CSS.escape(value);
+  }
+  return value.replace(/["\\]/g, "\\$&");
+}
+
 setup();
+applySpecFilter();

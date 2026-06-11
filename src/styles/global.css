@@ -778,6 +778,77 @@ table.dir tbody tr.row {
   line-height: 1.45;
 }
 
+.getting-in-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.getting-in-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.getting-in-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.getting-in-sector {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.path-badge {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: #ecccc0;
+}
+
+.getting-in-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-40);
+  line-height: 1.45;
+}
+
+.getting-in-grad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.getting-in-grad-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-40);
+}
+
+.getting-in-grad a {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 2px 8px;
+}
+
+.getting-in-grad a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ---- footer ---- */
 .foot {
   display: flex;

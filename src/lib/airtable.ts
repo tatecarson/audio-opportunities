@@ -110,6 +110,7 @@ export interface Employer {
   name: string;
   initials: string;
   sectors: string[];
+  gettingIn: SectorGuidance[];
   headquarters: string;
   geography: string[];
   size: string;
@@ -133,6 +134,17 @@ export interface MinorSuggestion {
 /** A row from the Minors table. */
 export interface Minor extends MinorSuggestion {
   sectors: string[];
+  lastVerified: string;
+}
+
+export interface SectorGuidance {
+  sector: string;
+  entryPath: string;
+  note: string;
+  gradSpecializations: string[];
+}
+
+export interface Sector extends SectorGuidance {
   lastVerified: string;
 }
 
@@ -229,12 +241,56 @@ function minorsForSectors(sectors: string[], bySector: Map<string, Minor[]>): Mi
   return out.sort((a, b) => a.name.localeCompare(b.name));
 }
 
+export async function getSectors(): Promise<Sector[]> {
+  let records: AirtableRecord[];
+  try {
+    records = await fetchTable("Sectors");
+  } catch {
+    return [];
+  }
+  return records
+    .filter((r) => name(r.fields["Last Verified"]))
+    .flatMap((r) => {
+      const f = r.fields;
+      const sector = name(f["Sector"]);
+      if (!sector) return [];
+      return {
+        sector,
+        entryPath: name(f["Entry Path"]),
+        note: name(f["Path Note"]),
+        gradSpecializations: names(f["Grad Specializations"]),
+        lastVerified: name(f["Last Verified"]),
+      };
+    });
+}
+
+function indexSectors(sectors: Sector[]): Map<string, Sector> {
+  return new Map(sectors.map((sector) => [sector.sector, sector]));
+}
+
+function guidanceForSectors(sectors: string[], bySector: Map<string, Sector>): SectorGuidance[] {
+  const out: SectorGuidance[] = [];
+  for (const sectorName of sectors) {
+    const sector = bySector.get(sectorName);
+    if (!sector) continue;
+    out.push({
+      sector: sectorName,
+      entryPath: sector.entryPath,
+      note: sector.note,
+      gradSpecializations: [...sector.gradSpecializations].sort((a, b) => a.localeCompare(b)),
+    });
+  }
+  return out;
+}
+
 export async function getEmployers(): Promise<{
   employers: Employer[];
   facets: { sector: Facet[]; size: Facet[]; geography: Facet[] };
 }> {
   const records = await fetchTable("Employers");
-  const minorsBySector = indexMinorsBySector(await getMinors());
+  const [minors, sectors] = await Promise.all([getMinors(), getSectors()]);
+  const minorsBySector = indexMinorsBySector(minors);
+  const sectorIndex = indexSectors(sectors);
 
   const employers: Employer[] = records
     .filter((r) => name(r.fields["Last Verified"]))
@@ -247,6 +303,7 @@ export async function getEmployers(): Promise<{
         name: nm,
         initials: initials(nm),
         sectors,
+        gettingIn: guidanceForSectors(sectors, sectorIndex),
         headquarters: name(f["Headquarters"]),
         geography: names(f["Hiring Geography"]),
         size: name(f["Company Size"]),
