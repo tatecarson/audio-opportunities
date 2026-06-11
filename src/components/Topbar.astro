@@ -24,5 +24,48 @@ const { active, employerCount, programCount } = Astro.props;
       Programs <span class="count">{programCount}</span>
     </a>
   </nav>
-
+  <div class="topbar-actions">
+    <button class="help-trigger" type="button" data-help-open aria-haspopup="dialog" aria-controls="help-title">
+      ? <span>How to read this</span>
+    </button>
+  </div>
 </header>
+
+<aside class="detail help" data-help-panel hidden>
+  <div class="detail-scrim" data-help-close></div>
+  <div class="detail-card help-card" role="dialog" aria-modal="true" aria-labelledby="help-title" tabindex="-1">
+    <div class="detail-head">
+      <div class="detail-titles">
+        <h2 id="help-title">How to read this</h2>
+        <span class="help-sub">What the sectors, entry paths, minors, and grad links are telling you.</span>
+      </div>
+      <button class="detail-x" type="button" data-help-close aria-label="Close help" title="Close">×</button>
+    </div>
+    <div class="detail-body help-body">
+      <div class="field">
+        <dt>Sectors</dt>
+        <dd>
+          A sector is a lane in audio work, like games, post-production, acoustics, or immersive audio. Employers can sit in more than one lane.
+        </dd>
+      </div>
+      <div class="field">
+        <dt>Entry paths</dt>
+        <dd>
+          The badge in <b>Getting in</b> is a quick signal about how reachable that lane usually is right after undergrad.
+        </dd>
+        <ul class="help-list">
+          <li><b>Open to new grads</b>: direct junior or early-career paths are common.</li>
+          <li><b>Experience first</b>: internships, assisting, or adjacent work usually comes before stronger roles.</li>
+          <li><b>Grad school recommended</b>: extra specialization often helps materially, but is not always mandatory.</li>
+          <li><b>Grad school required</b>: the field often expects graduate credentials or equivalent specialist training.</li>
+        </ul>
+      </div>
+      <div class="field">
+        <dt>Bridging the gap</dt>
+        <dd>
+          Suggested minors show which DSU add-ons can make you more credible in a field. Grad-path links jump to relevant programs when a sector usually rewards deeper specialization.
+        </dd>
+      </div>
+    </div>
+  </div>
+</aside>

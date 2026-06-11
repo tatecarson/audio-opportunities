@@ -142,6 +142,7 @@ function setup(root: ParentNode = document) {
   });
 
   setupDetailPanel(root, rows);
+  setupHelpModal(root);
   apply();
 }
 
@@ -367,6 +368,36 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
       e.preventDefault();
       navigate(1);
     }
+  });
+}
+
+function setupHelpModal(root: ParentNode) {
+  const panel = root.querySelector<HTMLElement>("[data-help-panel]");
+  const openBtn = root.querySelector<HTMLButtonElement>("[data-help-open]");
+  if (!panel || !openBtn) return;
+
+  const card = panel.querySelector<HTMLElement>(".help-card");
+  let lastFocus: HTMLElement | null = null;
+
+  function open() {
+    if (panel.hidden) lastFocus = document.activeElement as HTMLElement;
+    panel.hidden = false;
+    card?.focus();
+  }
+
+  function close() {
+    panel.hidden = true;
+    lastFocus?.focus();
+  }
+
+  openBtn.addEventListener("click", open);
+  panel.querySelectorAll<HTMLElement>("[data-help-close]").forEach((el) =>
+    el.addEventListener("click", close),
+  );
+
+  document.addEventListener("keydown", (e) => {
+    if (panel.hidden) return;
+    if (e.key === "Escape") close();
   });
 }
 
