@@ -288,18 +288,30 @@ function guidanceForSpecializations(
   specializations: string[],
   sectors: Sector[],
 ): SectorGuidance[] {
+  const genericSpecializations = new Set(["Research"]);
+  const specificSpecializations = specializations.filter((spec) => !genericSpecializations.has(spec));
   const matches: SectorGuidance[] = [];
   for (const sector of sectors) {
     const overlap = sector.gradSpecializations.filter((spec) => specializations.includes(spec));
     if (!overlap.length) continue;
+
+    const specificOverlap = overlap.filter((spec) => !genericSpecializations.has(spec));
+    if (specificSpecializations.length && !specificOverlap.length) continue;
+
     matches.push({
       sector: sector.sector,
       entryPath: sector.entryPath,
       note: sector.note,
-      gradSpecializations: overlap.sort((a, b) => a.localeCompare(b)),
+      gradSpecializations: (specificOverlap.length ? specificOverlap : overlap).sort((a, b) =>
+        a.localeCompare(b),
+      ),
     });
   }
-  return matches.sort((a, b) => a.sector.localeCompare(b.sector));
+  return matches.sort((a, b) => {
+    const overlapDiff = b.gradSpecializations.length - a.gradSpecializations.length;
+    if (overlapDiff !== 0) return overlapDiff;
+    return a.sector.localeCompare(b.sector);
+  });
 }
 
 export async function getEmployers(): Promise<{
