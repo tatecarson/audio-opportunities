@@ -491,6 +491,7 @@ function applyQueryFilters(root: ParentNode = document) {
     funding: ["funding"],
     size: ["size"],
     geography: ["geography"],
+    entrypath: ["path", "entrypath"],
   };
 
   let changed = false;

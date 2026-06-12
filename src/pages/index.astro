@@ -6,7 +6,7 @@ import DetailPanel from "../components/DetailPanel.astro";
 import { getEmployers, getPrograms, type Employer } from "../lib/airtable";
 
 let employers: Employer[] = [];
-let facets = { sector: [] as any[], size: [] as any[], geography: [] as any[] };
+let facets = { sector: [] as any[], size: [] as any[], geography: [] as any[], entryPath: [] as any[] };
 let programCount = 0;
 let error: string | null = null;
 
@@ -43,6 +43,7 @@ const feedbackHref =
               <button class="filters-toggle" data-filters-toggle aria-expanded="false">Show</button>
             </div>
           </div>
+          <FacetGroup title="Entry path" dim="entrypath" options={facets.entryPath} />
           <FacetGroup title="Sector" dim="sector" options={facets.sector} />
           <FacetGroup title="Company size" dim="size" options={facets.size} />
           <FacetGroup title="Hiring geography" dim="geography" options={facets.geography} />
@@ -80,7 +81,7 @@ const feedbackHref =
           </div>
 
           <div class="table-wrap">
-            <table class="dir" data-dims="sector,size,geography">
+            <table class="dir" data-dims="sector,size,geography,entrypath">
               <thead>
                 <tr>
                   <th class="col-rank">#</th>
@@ -99,6 +100,7 @@ const feedbackHref =
                     data-sector={e.sectors.join("|")}
                     data-size={e.size}
                     data-geography={e.geography.join("|")}
+                    data-entrypath={e.entryPaths.join("|")}
                     data-detail={JSON.stringify({
                       title: e.name,
                       initials: e.initials,
