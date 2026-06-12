@@ -622,6 +622,11 @@ table.dir tbody tr.row {
   z-index: 50;
 }
 
+/* Help must stay reachable while a detail panel is open underneath. */
+.detail.help {
+  z-index: 60;
+}
+
 .detail-scrim {
   position: absolute;
   inset: 0;

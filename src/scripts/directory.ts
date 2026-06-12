@@ -46,8 +46,10 @@ function setup(root: ParentNode = document) {
     return (searchInput?.value ?? "").trim().toLowerCase();
   }
 
-  function matchesSearch(row: (typeof parsed)[number], q: string) {
-    return q === "" || row.search.includes(q);
+  // Every word in the query must appear somewhere in the row's haystack, so
+  // "video games" still matches rows tagged "Games".
+  function matchesSearch(row: (typeof parsed)[number], tokens: string[]) {
+    return tokens.every((t) => row.search.includes(t));
   }
 
   function checkedByDim(): Record<string, Set<string>> {
@@ -76,15 +78,18 @@ function setup(root: ParentNode = document) {
     return true;
   }
 
+  const emptyDefault = emptyRow?.querySelector("td")?.textContent ?? "";
+
   function apply() {
     const checked = checkedByDim();
     const q = query();
+    const tokens = q.split(/\s+/).filter(Boolean);
     let visible = 0;
 
     searchBar?.classList.toggle("has-query", q !== "");
 
     for (const row of parsed) {
-      const show = rowMatches(row, checked) && matchesSearch(row, q);
+      const show = rowMatches(row, checked) && matchesSearch(row, tokens);
       row.el.classList.toggle("row-hidden", !show);
       if (show) visible++;
     }
@@ -98,8 +103,16 @@ function setup(root: ParentNode = document) {
       if (rk) rk.textContent = String(rank).padStart(2, "0");
     }
 
-    // Empty state.
-    if (emptyRow) emptyRow.classList.toggle("row-hidden", visible !== 0);
+    // Empty state. Name the query when search is what produced zero rows.
+    if (emptyRow) {
+      emptyRow.classList.toggle("row-hidden", visible !== 0);
+      const td = emptyRow.querySelector("td");
+      if (td) {
+        td.textContent = q
+          ? `No matches for “${q}”. Try fewer words, or reset the filters.`
+          : emptyDefault;
+      }
+    }
 
     // Facet counts (count rows that match the OTHER dimensions and carry this value).
     for (const cb of checkboxes) {
@@ -107,7 +120,7 @@ function setup(root: ParentNode = document) {
       const val = cb.value;
       let n = 0;
       for (const row of parsed) {
-        if (rowMatches(row, checked, dim) && matchesSearch(row, q) && row.vals[dim].has(val)) n++;
+        if (rowMatches(row, checked, dim) && matchesSearch(row, tokens) && row.vals[dim].has(val)) n++;
       }
       const span = root.querySelector<HTMLElement>(`[data-facet-count="${dim}:${cssEscape(val)}"]`);
       if (span) span.textContent = String(n);
@@ -420,6 +433,9 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
 
   document.addEventListener("keydown", (e) => {
     if (panel.hidden) return;
+    // The help overlay stacks above the detail panel; let it own the keys.
+    const help = document.querySelector<HTMLElement>("[data-help-panel]");
+    if (help && !help.hidden) return;
     if (e.key === "Escape") close();
     else if (e.key === "ArrowUp") {
       e.preventDefault();
