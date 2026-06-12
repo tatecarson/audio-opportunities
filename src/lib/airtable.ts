@@ -221,6 +221,16 @@ export interface Facet {
   count: number;
 }
 
+const GEOGRAPHY_LABELS: Record<string, string> = {
+  "Relocation Required": "On-site / relocation likely",
+  Midwest: "Midwest roles",
+  "Remote-Friendly": "Remote-friendly",
+};
+
+export function labelGeography(value: string): string {
+  return GEOGRAPHY_LABELS[value] ?? value;
+}
+
 /** Build facet buckets (value -> count) from a list of multi/single-valued fields. */
 function buildFacet(rows: { [k: string]: unknown }[], key: string): Facet[] {
   const counts = new Map<string, number>();
@@ -234,6 +244,10 @@ function buildFacet(rows: { [k: string]: unknown }[], key: string): Facet[] {
   return [...counts.entries()]
     .map(([value, count]) => ({ label: value, value, count }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+}
+
+function relabelFacet(facet: Facet[], labeler: (value: string) => string): Facet[] {
+  return facet.map((item) => ({ ...item, label: labeler(item.value) }));
 }
 
 /**
@@ -422,7 +436,7 @@ export async function getEmployers(): Promise<{
     facets: {
       sector: buildFacet(employers, "sectors"),
       size: buildFacet(employers, "size"),
-      geography: buildFacet(employers, "geography"),
+      geography: relabelFacet(buildFacet(employers, "geography"), labelGeography),
       entryPath: orderEntryPathFacet(buildFacet(employers, "entryPaths")),
     },
   };

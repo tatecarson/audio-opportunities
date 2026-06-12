@@ -3,7 +3,7 @@ import Base from "../layouts/Base.astro";
 import Topbar from "../components/Topbar.astro";
 import FacetGroup from "../components/FacetGroup.astro";
 import DetailPanel from "../components/DetailPanel.astro";
-import { getEmployers, getPrograms, type Employer } from "../lib/airtable";
+import { getEmployers, getPrograms, labelGeography, type Employer } from "../lib/airtable";
 
 let employers: Employer[] = [];
 let facets = { sector: [] as any[], size: [] as any[], geography: [] as any[], entryPath: [] as any[] };
@@ -22,6 +22,7 @@ try {
 const sizeClass = (s: string) =>
   /small/i.test(s) ? "size-s" : /large/i.test(s) ? "size-l" : "size-m";
 const sectorCount = facets.sector.length;
+const visibleTags = 2;
 const feedbackHref =
   "mailto:tate.carson@dsu.edu?subject=Audio%20Directory%20addition%20or%20correction&body=What%20should%20be%20added%20or%20corrected%3F%0A%0AName%3A%0ALink%3A%0AWhat%20changed%3A%0ASource%20or%20context%3A";
 ---
@@ -46,7 +47,7 @@ const feedbackHref =
           <FacetGroup title="Entry path" dim="entrypath" options={facets.entryPath} />
           <FacetGroup title="Sector" dim="sector" options={facets.sector} />
           <FacetGroup title="Company size" dim="size" options={facets.size} />
-          <FacetGroup title="Hiring geography" dim="geography" options={facets.geography} />
+          <FacetGroup title="Work location" dim="geography" options={facets.geography} />
         </aside>
 
         <section class="main">
@@ -64,9 +65,8 @@ const feedbackHref =
 
           <div class="scope-note">
             <p>
-              Built mainly for Digital Sound Design students at Dakota State University; anyone exploring audio careers is welcome to use it.
+              Built for Digital Sound Design students at Dakota State University; open to anyone exploring audio careers.
             </p>
-            <a href={feedbackHref}>Suggest an addition or correction ↗</a>
           </div>
 
           <div class="searchbar" data-searchbar>
@@ -84,15 +84,14 @@ const feedbackHref =
             <table class="dir" data-dims="sector,size,geography,entrypath">
               <thead>
                 <tr>
-                  <th class="col-rank">#</th>
                   <th>Company / Sector</th>
                   <th>Headquarters</th>
                   <th class="col-hide-sm">Size</th>
-                  <th class="col-hide-sm">Geography</th>
+                  <th class="col-hide-sm">Work location</th>
                 </tr>
               </thead>
               <tbody>
-                {employers.map((e, i) => (
+                {employers.map((e) => (
                   <tr
                     class="row"
                     data-name={e.name}
@@ -110,7 +109,7 @@ const feedbackHref =
                         Sector: e.sectors.join(", "),
                         Headquarters: e.headquarters,
                         "Company size": e.size,
-                        "Hiring geography": e.geography.join(", "),
+                        "Work location": e.geography.map(labelGeography).join(", "),
                         "Internship program": e.internship,
                         "Entry-level roles": e.roles,
                         Notes: e.notes,
@@ -119,7 +118,6 @@ const feedbackHref =
                       minors: e.minors,
                     })}
                   >
-                    <td class="col-rank">{String(i + 1).padStart(2, "0")}</td>
                     <td>
                       <div class="cell-co">
                         <span class="avatar">{e.initials}</span>
@@ -134,9 +132,12 @@ const feedbackHref =
                             )}
                           </span>
                           <span class="tags">
-                            {e.sectors.map((s) => (
+                            {e.sectors.slice(0, visibleTags).map((s) => (
                               <span class="tag">{s}</span>
                             ))}
+                            {e.sectors.length > visibleTags && (
+                              <span class="tag tag-more">+{e.sectors.length - visibleTags}</span>
+                            )}
                           </span>
                         </span>
                       </div>
@@ -146,14 +147,14 @@ const feedbackHref =
                     <td class="col-hide-sm">
                       <span class="geo">
                         {e.geography.length
-                          ? e.geography.map((g) => <span class="badge">{g}</span>)
+                          ? e.geography.map((g) => <span class="badge">{labelGeography(g)}</span>)
                           : <span class="hq">—</span>}
                       </span>
                     </td>
                   </tr>
                 ))}
                 <tr class="empty-row row-hidden">
-                  <td colspan="5">No employers match the current filters.</td>
+                  <td colspan="4">No employers match the current filters.</td>
                 </tr>
               </tbody>
             </table>

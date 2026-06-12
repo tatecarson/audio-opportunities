@@ -94,15 +94,6 @@ function setup(root: ParentNode = document) {
       if (show) visible++;
     }
 
-    // Re-rank visible rows.
-    let rank = 0;
-    for (const row of parsed) {
-      if (row.el.classList.contains("row-hidden")) continue;
-      rank++;
-      const rk = row.el.querySelector<HTMLElement>(".col-rank");
-      if (rk) rk.textContent = String(rank).padStart(2, "0");
-    }
-
     // Empty state. Name the query when search is what produced zero rows.
     if (emptyRow) {
       emptyRow.classList.toggle("row-hidden", visible !== 0);
