@@ -208,6 +208,30 @@ function setup(root: ParentNode = document) {
     true,
   );
 
+  // Collapsible facet groups: titles toggle; start collapsed on small
+  // screens so the filter drawer reads as a short menu, not a wall.
+  const setCollapsed = (group: Element, collapsed: boolean) => {
+    group.classList.toggle("is-collapsed", collapsed);
+    group.querySelector("[data-facet-toggle]")?.setAttribute("aria-expanded", String(!collapsed));
+  };
+  root.querySelectorAll<HTMLButtonElement>("[data-facet-toggle]").forEach((btn) => {
+    const group = btn.closest(".facet");
+    if (!group) return;
+    btn.addEventListener("click", () => setCollapsed(group, !group.classList.contains("is-collapsed")));
+  });
+  if (window.matchMedia("(max-width: 860px)").matches) {
+    root.querySelectorAll(".facet[data-facet-group]").forEach((g) => setCollapsed(g, true));
+  }
+  // Deep links may check boxes inside collapsed groups — reveal those groups.
+  table.addEventListener("filters:query-applied", () => {
+    for (const cb of checkboxes) {
+      if (cb.checked) {
+        const group = cb.closest(".facet");
+        if (group) setCollapsed(group, false);
+      }
+    }
+  });
+
   // Mobile: collapse the filter sidebar behind a Show/Hide toggle.
   filtersToggle?.addEventListener("click", () => {
     const open = sidebar?.classList.toggle("is-open") ?? false;
