@@ -12,6 +12,24 @@
  * Facet counts update to reflect rows matching the *other* dimensions.
  */
 
+/** URL keys per dimension; the first entry is what we write to the URL. */
+const ALIASES: Record<string, string[]> = {
+  specialization: ["spec", "specialization"],
+  sector: ["sector"],
+  degree: ["degree"],
+  region: ["region"],
+  funding: ["funding"],
+  size: ["size"],
+  geography: ["geography"],
+  entrypath: ["path", "entrypath"],
+};
+
+/**
+ * Snapshot of the query string at load. apply() rewrites the URL to mirror
+ * filter state, so inbound deep links must be read from this snapshot.
+ */
+const initialSearch = window.location.search;
+
 function setup(root: ParentNode = document) {
   const table = root.querySelector<HTMLTableElement>("table.dir[data-dims]");
   if (!table) return;
@@ -128,6 +146,31 @@ function setup(root: ParentNode = document) {
     }
 
     if (showingEl) showingEl.textContent = String(visible);
+
+    // Row tag chips highlight when their facet value is active.
+    const activeVals = new Set<string>();
+    for (const cb of checkboxes) if (cb.checked) activeVals.add(`${cb.dataset.facet}:${cb.value}`);
+    root.querySelectorAll<HTMLElement>("button.tag[data-tag-facet]").forEach((tag) => {
+      const key = `${tag.dataset.tagFacet}:${tag.textContent?.trim()}`;
+      tag.classList.toggle("is-active", activeVals.has(key));
+    });
+
+    syncUrl();
+  }
+
+  /** Mirror filter + search state into the query string so views are shareable. */
+  function syncUrl() {
+    const params = new URLSearchParams();
+    for (const d of dims) {
+      const key = (ALIASES[d] ?? [d])[0];
+      for (const cb of checkboxes) {
+        if (cb.dataset.facet === d && cb.checked) params.append(key, cb.value);
+      }
+    }
+    const q = query();
+    if (q) params.set("q", q);
+    const qs = params.toString();
+    history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
   }
 
   function cssEscape(v: string) {
@@ -146,6 +189,24 @@ function setup(root: ParentNode = document) {
     if (searchInput) searchInput.value = "";
     apply();
   });
+
+  // Row tag chips toggle their facet. Capture phase so the row's
+  // open-detail-panel click handler never sees the event.
+  tbody.addEventListener(
+    "click",
+    (e) => {
+      const tag = (e.target as HTMLElement).closest<HTMLElement>("button.tag[data-tag-facet]");
+      if (!tag) return;
+      const cb = checkboxes.find(
+        (c) => c.dataset.facet === tag.dataset.tagFacet && c.value === tag.textContent?.trim(),
+      );
+      if (!cb) return;
+      e.stopPropagation();
+      cb.checked = !cb.checked;
+      apply();
+    },
+    true,
+  );
 
   // Mobile: collapse the filter sidebar behind a Show/Hide toggle.
   filtersToggle?.addEventListener("click", () => {
@@ -412,13 +473,13 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
     row.tabIndex = 0;
     row.setAttribute("role", "button");
     row.addEventListener("click", (e) => {
-      // Let real links (e.g. the company name) behave normally.
-      if ((e.target as HTMLElement).closest("a")) return;
+      // Let real links and tag-filter buttons behave normally.
+      if ((e.target as HTMLElement).closest("a, button.tag")) return;
       open(row);
     });
     row.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
-        if ((e.target as HTMLElement).closest("a")) return;
+        if ((e.target as HTMLElement).closest("a, button.tag")) return;
         e.preventDefault();
         open(row);
       }
@@ -482,36 +543,39 @@ function applyQueryFilters(root: ParentNode = document) {
   if (!table) return;
 
   const dims = (table.dataset.dims ?? "").split(",").map((s) => s.trim()).filter(Boolean);
-  const params = new URLSearchParams(window.location.search);
-  const aliases: Record<string, string[]> = {
-    specialization: ["spec", "specialization"],
-    sector: ["sector"],
-    degree: ["degree"],
-    region: ["region"],
-    funding: ["funding"],
-    size: ["size"],
-    geography: ["geography"],
-  };
+  // Read from the load-time snapshot: setup()'s first apply() has already
+  // rewritten location.search by the time this runs.
+  const params = new URLSearchParams(initialSearch);
 
   let changed = false;
   for (const dim of dims) {
-    const keys = aliases[dim] ?? [dim];
+    const keys = ALIASES[dim] ?? [dim];
     for (const key of keys) {
-      const value = params.get(key);
-      if (!value) continue;
-      const checkbox = root.querySelector<HTMLInputElement>(
-        `input[type="checkbox"][data-facet="${dim}"][value="${cssEscape(value)}"]`,
-      );
-      if (checkbox && !checkbox.checked) {
-        checkbox.checked = true;
-        changed = true;
+      const values = params.getAll(key);
+      if (!values.length) continue;
+      for (const value of values) {
+        const checkbox = root.querySelector<HTMLInputElement>(
+          `input[type="checkbox"][data-facet="${dim}"][value="${cssEscape(value)}"]`,
+        );
+        if (checkbox && !checkbox.checked) {
+          checkbox.checked = true;
+          changed = true;
+        }
       }
       break;
     }
   }
 
+  const q = params.get("q");
+  const searchInput = root.querySelector<HTMLInputElement>("[data-search-input]");
+  if (q && searchInput) {
+    searchInput.value = q;
+    changed = true;
+  }
+
   if (changed) {
     table.dispatchEvent(new Event("filters:query-applied", { bubbles: true }));
+    searchInput?.dispatchEvent(new Event("input", { bubbles: true }));
     root.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-facet]').forEach((cb) => {
       if (cb.checked) cb.dispatchEvent(new Event("change", { bubbles: true }));
     });

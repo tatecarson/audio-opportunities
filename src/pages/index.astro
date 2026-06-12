@@ -133,7 +133,7 @@ const feedbackHref =
                           </span>
                           <span class="tags">
                             {e.sectors.map((s) => (
-                              <span class="tag">{s}</span>
+                              <button class="tag" type="button" data-tag-facet="sector" title={`Filter by ${s}`}>{s}</button>
                             ))}
                           </span>
                         </span>

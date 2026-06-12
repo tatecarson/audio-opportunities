@@ -137,7 +137,7 @@ const feedbackHref =
                           <span class="tags">
                             <span class="institution-chip">{p.institution}</span>
                             {p.specializations.map((s) => (
-                              <span class="tag">{s}</span>
+                              <button class="tag" type="button" data-tag-facet="specialization" title={`Filter by ${s}`}>{s}</button>
                             ))}
                           </span>
                         </span>

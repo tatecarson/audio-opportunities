@@ -550,6 +550,23 @@ table.dir tbody tr:hover {
   border-radius: 2px;
 }
 
+/* Tags that map to a facet are real buttons and behave like filters. */
+button.tag {
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+button.tag:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+button.tag.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+
 .hq {
   color: var(--ink-60);
   white-space: nowrap;
