@@ -238,6 +238,10 @@ a {
 }
 
 .facet-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-family: var(--mono);
   font-size: 12px;
   text-transform: uppercase;
@@ -246,16 +250,49 @@ a {
   margin-bottom: 8px;
 }
 
+.facet-guide-trigger {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink-60);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: var(--r);
+  cursor: pointer;
+}
+
+.facet-guide-trigger:hover,
+.facet-guide-trigger:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+}
+
 .facet-opt {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 3px 0;
-  cursor: pointer;
   user-select: none;
 }
 
-.facet-opt input {
+.facet-check {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.facet-check input {
   appearance: none;
   width: 13px;
   height: 13px;
@@ -268,12 +305,12 @@ a {
   background: var(--card);
 }
 
-.facet-opt input:checked {
+.facet-check input:checked {
   background: var(--accent);
   border-color: var(--accent);
 }
 
-.facet-opt input:checked::after {
+.facet-check input:checked::after {
   content: "";
   width: 6px;
   height: 6px;
@@ -608,6 +645,10 @@ table.dir tbody tr.row {
   z-index: 60;
 }
 
+.detail.sector-guide {
+  z-index: 65;
+}
+
 .detail-scrim {
   position: absolute;
   inset: 0;
@@ -630,6 +671,19 @@ table.dir tbody tr.row {
   outline: none;
 }
 
+.sector-guide-card {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  height: min(760px, calc(100vh - 48px));
+  width: min(820px, calc(100vw - 48px));
+  max-width: calc(100vw - 48px);
+  border: 1px solid var(--ink);
+  box-shadow: 0 22px 70px rgba(20, 19, 15, 0.24);
+  transform: translate(-50%, -50%);
+  animation: sector-guide-pop 0.16s ease-out;
+}
+
 @keyframes detail-fade {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -638,6 +692,11 @@ table.dir tbody tr.row {
 @keyframes detail-slide {
   from { transform: translateX(16px); opacity: 0.4; }
   to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes sector-guide-pop {
+  from { transform: translate(-50%, calc(-50% + 10px)); opacity: 0.4; }
+  to { transform: translate(-50%, -50%); opacity: 1; }
 }
 
 .detail-head {
@@ -823,6 +882,39 @@ table.dir tbody tr.row {
 
 .help-list li + li {
   margin-top: 8px;
+}
+
+.sector-guide-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  padding: 0 20px 24px;
+}
+
+.sector-guide-item {
+  padding: 13px 14px 13px 0;
+  border-bottom: 1px solid var(--line-2);
+}
+
+.sector-guide-item:nth-child(odd) {
+  border-right: 1px solid var(--line-2);
+}
+
+.sector-guide-item:nth-child(even) {
+  padding-left: 14px;
+}
+
+.sector-guide-item h3 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.sector-guide-item p {
+  margin: 0;
+  color: var(--ink-60);
+  font-size: 12px;
+  line-height: 1.42;
 }
 
 .getting-in-list {
@@ -1028,6 +1120,24 @@ table.dir tbody tr.row {
 
   .searchbar {
     padding: 10px 16px;
+  }
+
+  .sector-guide-card {
+    height: calc(100vh - 32px);
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .sector-guide-body {
+    grid-template-columns: 1fr;
+    padding: 0 16px 22px;
+  }
+
+  .sector-guide-item,
+  .sector-guide-item:nth-child(even) {
+    padding-left: 0;
+    padding-right: 0;
+    border-right: none;
   }
 
   /* Drop low-priority columns; everything is still in the detail panel. */

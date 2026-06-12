@@ -8,19 +8,77 @@ interface Props {
   options: Facet[];
 }
 const { title, dim, options } = Astro.props;
+const describedOptions = options.filter((o) => o.description);
+const guideTitleId = `${dim}-guide-title`;
 ---
 
 <div class="facet" data-facet-group={dim}>
-  <div class="facet-title">{title}</div>
+  <div class="facet-title">
+    <span>{title}</span>
+    {
+      describedOptions.length > 0 && (
+        <button
+          class="facet-guide-trigger"
+          type="button"
+          data-facet-guide-open={dim}
+          aria-haspopup="dialog"
+          aria-controls={guideTitleId}
+        >
+          ? <span>Guide</span>
+        </button>
+      )
+    }
+  </div>
   {
     options.map((o) => (
-      <label class="facet-opt">
-        <input type="checkbox" data-facet={dim} value={o.value} />
-        <span class="label">{o.label}</span>
-        <span class="n" data-facet-count={`${dim}:${o.value}`}>
-          {o.count}
-        </span>
-      </label>
+      <div class="facet-opt">
+        <label class="facet-check">
+          <input type="checkbox" data-facet={dim} value={o.value} />
+          <span class="label">{o.label}</span>
+          <span class="n" data-facet-count={`${dim}:${o.value}`}>
+            {o.count}
+          </span>
+        </label>
+      </div>
     ))
   }
 </div>
+
+{
+  describedOptions.length > 0 && (
+    <aside class="detail sector-guide" data-facet-guide-panel={dim} hidden>
+      <div class="detail-scrim" data-facet-guide-close={dim}></div>
+      <div
+        class="detail-card sector-guide-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={guideTitleId}
+        tabindex="-1"
+      >
+        <div class="detail-head">
+          <div class="detail-titles">
+            <h2 id={guideTitleId}>{title} guide</h2>
+            <span class="help-sub">Plain-language notes from the verified sector guidance.</span>
+          </div>
+          <button
+            class="detail-x"
+            type="button"
+            data-facet-guide-close={dim}
+            aria-label={`Close ${title} guide`}
+            title="Close"
+          >
+            ×
+          </button>
+        </div>
+        <div class="sector-guide-body">
+          {describedOptions.map((o) => (
+            <section class="sector-guide-item">
+              <h3>{o.label}</h3>
+              <p>{o.description}</p>
+            </section>
+          ))}
+        </div>
+      </div>
+    </aside>
+  )
+}
