@@ -111,6 +111,8 @@ export interface Employer {
   initials: string;
   sectors: string[];
   gettingIn: SectorGuidance[];
+  /** Unique entry paths across this employer's sectors, e.g. ["Open to new grads"]. */
+  entryPaths: string[];
   headquarters: string;
   geography: string[];
   size: string;
@@ -314,9 +316,25 @@ function guidanceForSpecializations(
   });
 }
 
+/** Fixed display order: most reachable first. Unknown values sort last. */
+const ENTRY_PATH_ORDER = [
+  "Open to new grads",
+  "Experience first",
+  "Grad school recommended",
+  "Grad school required",
+];
+
+function orderEntryPathFacet(facet: Facet[]): Facet[] {
+  const rank = (v: string) => {
+    const i = ENTRY_PATH_ORDER.indexOf(v);
+    return i === -1 ? ENTRY_PATH_ORDER.length : i;
+  };
+  return [...facet].sort((a, b) => rank(a.value) - rank(b.value) || a.label.localeCompare(b.label));
+}
+
 export async function getEmployers(): Promise<{
   employers: Employer[];
-  facets: { sector: Facet[]; size: Facet[]; geography: Facet[] };
+  facets: { sector: Facet[]; size: Facet[]; geography: Facet[]; entryPath: Facet[] };
 }> {
   const records = await fetchTable("Employers");
   const [minors, sectors] = await Promise.all([getMinors(), getSectors()]);
@@ -329,12 +347,14 @@ export async function getEmployers(): Promise<{
       const f = r.fields;
       const nm = name(f["Name"]) || "Untitled";
       const sectors = names(f["Sector"]);
+      const gettingIn = guidanceForSectors(sectors, sectorIndex);
       return {
         id: r.id,
         name: nm,
         initials: initials(nm),
         sectors,
-        gettingIn: guidanceForSectors(sectors, sectorIndex),
+        gettingIn,
+        entryPaths: [...new Set(gettingIn.map((g) => g.entryPath).filter(Boolean))],
         headquarters: name(f["Headquarters"]),
         geography: names(f["Hiring Geography"]),
         size: name(f["Company Size"]),
@@ -355,6 +375,7 @@ export async function getEmployers(): Promise<{
       sector: buildFacet(employers, "sectors"),
       size: buildFacet(employers, "size"),
       geography: buildFacet(employers, "geography"),
+      entryPath: orderEntryPathFacet(buildFacet(employers, "entryPaths")),
     },
   };
 }
