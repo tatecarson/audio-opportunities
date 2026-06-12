@@ -219,6 +219,7 @@ export interface Facet {
   label: string;
   value: string;
   count: number;
+  description?: string;
 }
 
 const GEOGRAPHY_LABELS: Record<string, string> = {
@@ -248,6 +249,13 @@ function buildFacet(rows: { [k: string]: unknown }[], key: string): Facet[] {
 
 function relabelFacet(facet: Facet[], labeler: (value: string) => string): Facet[] {
   return facet.map((item) => ({ ...item, label: labeler(item.value) }));
+}
+
+function describeSectorFacet(facet: Facet[], sectorIndex: Map<string, Sector>): Facet[] {
+  return facet.map((item) => {
+    const description = sectorIndex.get(item.value)?.note;
+    return description ? { ...item, description } : item;
+  });
 }
 
 /**
@@ -434,7 +442,7 @@ export async function getEmployers(): Promise<{
   return {
     employers,
     facets: {
-      sector: buildFacet(employers, "sectors"),
+      sector: describeSectorFacet(buildFacet(employers, "sectors"), sectorIndex),
       size: buildFacet(employers, "size"),
       geography: relabelFacet(buildFacet(employers, "geography"), labelGeography),
       entryPath: orderEntryPathFacet(buildFacet(employers, "entryPaths")),

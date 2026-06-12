@@ -247,15 +247,24 @@ a {
 }
 
 .facet-opt {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 3px 0;
-  cursor: pointer;
   user-select: none;
 }
 
-.facet-opt input {
+.facet-check {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.facet-check input {
   appearance: none;
   width: 13px;
   height: 13px;
@@ -268,12 +277,12 @@ a {
   background: var(--card);
 }
 
-.facet-opt input:checked {
+.facet-check input:checked {
   background: var(--accent);
   border-color: var(--accent);
 }
 
-.facet-opt input:checked::after {
+.facet-check input:checked::after {
   content: "";
   width: 6px;
   height: 6px;
@@ -291,6 +300,63 @@ a {
   font-family: var(--mono);
   font-size: 12px;
   color: var(--ink-40);
+}
+
+.facet-info {
+  position: relative;
+  flex: none;
+}
+
+.facet-info summary {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink-40);
+  background: var(--card);
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1;
+  cursor: help;
+}
+
+.facet-info summary::-webkit-details-marker {
+  display: none;
+}
+
+.facet-info summary:hover,
+.facet-info summary:focus-visible,
+.facet-info[open] summary {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+}
+
+.facet-info p {
+  position: absolute;
+  z-index: 30;
+  right: 0;
+  top: 22px;
+  width: min(260px, calc(100vw - 48px));
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--ink);
+  background: var(--card);
+  box-shadow: 0 10px 24px rgba(20, 19, 15, 0.12);
+  color: var(--ink-60);
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: text;
+  display: none;
+}
+
+.facet-info[open] p,
+.facet-info:hover p,
+.facet-info:focus-within p {
+  display: block;
 }
 
 .facet-opt.is-zero {
