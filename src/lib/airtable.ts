@@ -122,53 +122,6 @@ export interface Employer {
   lastVerified: string;
   /** DSU minors suggested for this employer's sector(s), deduped + sorted. */
   minors: MinorSuggestion[];
-  /** Extra search terms derived from sectors, so common student phrasings match. */
-  searchSynonyms: string;
-}
-
-/**
- * Common phrasings students type that don't appear in record text, folded into
- * the search haystack per sector. "video games" should find game studios even
- * though no record contains the word "video".
- */
-const SECTOR_SEARCH_SYNONYMS: Record<string, string> = {
-  Games: "video games gaming game studio game audio",
-  "VR/AR": "virtual reality augmented reality xr headset metaverse",
-  "Post-Production": "film tv television movie movies dialogue editing",
-  "Podcast/Radio": "podcasting podcasts npr",
-  "Audio Software/Tools": "plugins plug-ins daw software developer programming",
-  "Live Sound": "concerts touring front of house foh monitor engineer",
-  "Spatial & Immersive Audio": "atmos ambisonics surround binaural",
-  "AI Music": "artificial intelligence machine learning mir",
-  "Generative & AI Audio": "artificial intelligence machine learning text to speech",
-  "Voice & Conversational AI": "speech synthesis voice assistant tts",
-  "Automotive & Embedded Audio": "cars vehicle dsp embedded systems",
-  "Audio Hardware": "headphones speakers microphones consumer electronics devices",
-  "Simulation & XR Training": "simulators defense military training",
-  "Theme Parks": "attractions rides shows themed entertainment",
-  "Audiobooks & Spoken-Word": "audiobook narration voiceover",
-  "Hearing Health & Audiology": "hearing aids cochlear implants clinical",
-  "Acoustics Consulting": "architectural acoustics noise control",
-  Broadcast: "tv television sports radio station",
-  "Music Licensing": "sync publishing royalties",
-  "Audio Preservation & Archives": "restoration archival digitization",
-  "Accessibility & Captioning": "captions subtitles transcription",
-  "Audio Test & Measurement": "qa quality assurance lab measurement",
-  "Bioacoustics & Soundscape Ecology": "wildlife conservation field recording nature",
-  "Forensic Audio": "evidence investigation law enforcement",
-  "AV Systems Integration": "installation commissioning conference systems integrator",
-  "Audio Engineering": "recording studio mixing mastering producer",
-  "Sonic Branding": "advertising jingles brand sound",
-  "EdTech & Learning Media": "education e-learning courseware",
-  "Localization & Dubbing": "translation dubbing adr languages",
-};
-
-/** Space-joined synonym text for a record's sectors (deduped is unnecessary — search is substring-based). */
-function searchSynonymsFor(sectors: string[]): string {
-  return sectors
-    .map((s) => SECTOR_SEARCH_SYNONYMS[s] ?? "")
-    .filter(Boolean)
-    .join(" ");
 }
 
 /** A minor as shown to students (no sector/gate metadata). */
@@ -392,7 +345,6 @@ export async function getEmployers(): Promise<{
         notes: name(f["Notes"]),
         lastVerified: name(f["Last Verified"]),
         minors: minorsForSectors(sectors, minorsBySector),
-        searchSynonyms: searchSynonymsFor(sectors),
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name));

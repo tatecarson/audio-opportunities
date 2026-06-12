@@ -95,7 +95,7 @@ const feedbackHref =
                   <tr
                     class="row"
                     data-name={e.name}
-                    data-search={[e.name, e.headquarters, ...e.sectors, e.roles, e.notes, e.searchSynonyms].join(" ").toLowerCase()}
+                    data-search={[e.name, e.headquarters, ...e.sectors, e.roles, e.notes].join(" ").toLowerCase()}
                     data-sector={e.sectors.join("|")}
                     data-size={e.size}
                     data-geography={e.geography.join("|")}
