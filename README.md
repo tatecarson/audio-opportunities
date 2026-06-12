@@ -58,7 +58,11 @@ AIRTABLE_BASE_ID=appyqRTTdm4p0Ze0P
 
 ## Develop & build
 
+Astro 6 requires **Node ≥ 22.12**. With nvm, `nvm use` picks the right version
+from the repo's `.nvmrc`.
+
 ```sh
+nvm use          # or otherwise select Node 22.12+
 npm install      # first time only
 npm run dev      # local dev at http://localhost:4321
 npm run build    # static build into ./dist
