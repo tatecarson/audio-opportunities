@@ -11,16 +11,21 @@ const { title, dim, options } = Astro.props;
 ---
 
 <div class="facet" data-facet-group={dim}>
-  <div class="facet-title">{title}</div>
-  {
-    options.map((o) => (
-      <label class="facet-opt">
-        <input type="checkbox" data-facet={dim} value={o.value} />
-        <span class="label">{o.label}</span>
-        <span class="n" data-facet-count={`${dim}:${o.value}`}>
-          {o.count}
-        </span>
-      </label>
-    ))
-  }
+  <button class="facet-title" type="button" data-facet-toggle aria-expanded="true">
+    {title}
+    <span class="facet-caret" aria-hidden="true">▾</span>
+  </button>
+  <div class="facet-opts">
+    {
+      options.map((o) => (
+        <label class="facet-opt">
+          <input type="checkbox" data-facet={dim} value={o.value} />
+          <span class="label">{o.label}</span>
+          <span class="n" data-facet-count={`${dim}:${o.value}`}>
+            {o.count}
+          </span>
+        </label>
+      ))
+    }
+  </div>
 </div>

@@ -244,6 +244,37 @@ a {
   letter-spacing: 0.12em;
   color: var(--ink-40);
   margin-bottom: 8px;
+  /* button reset — titles toggle their group */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.facet-title:hover {
+  color: var(--ink);
+}
+
+.facet-caret {
+  font-size: 10px;
+  transition: transform 0.12s ease-out;
+}
+
+.facet.is-collapsed .facet-caret {
+  transform: rotate(-90deg);
+}
+
+.facet.is-collapsed .facet-opts {
+  display: none;
+}
+
+.facet.is-collapsed .facet-title {
+  margin-bottom: 0;
 }
 
 .facet-opt {
