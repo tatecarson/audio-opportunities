@@ -351,8 +351,7 @@ a {
 .scope-note {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
+  justify-content: flex-start;
   padding: 10px 24px;
   border-bottom: 1px solid var(--line);
   background: #faf9f4;
@@ -360,24 +359,9 @@ a {
 
 .scope-note p {
   margin: 0;
-  max-width: 760px;
+  max-width: 860px;
   color: var(--ink-60);
   font-size: 12px;
-}
-
-.scope-note a {
-  flex: none;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.scope-note a:hover {
-  text-decoration: underline;
 }
 
 /* ---- search bar ---- */
@@ -477,14 +461,6 @@ table.dir tbody tr:hover {
   background: #faf9f4;
 }
 
-.col-rank {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink-40);
-  width: 36px;
-  text-align: right;
-}
-
 .cell-co {
   display: flex;
   align-items: center;
@@ -550,6 +526,12 @@ table.dir tbody tr:hover {
   border-radius: 2px;
 }
 
+.tag-more {
+  color: var(--ink-40);
+  background: transparent;
+  border: 1px solid var(--line-2);
+}
+
 .hq {
   color: var(--ink-60);
   white-space: nowrap;
@@ -589,9 +571,8 @@ table.dir tbody tr:hover {
 
 .geo .badge {
   font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   color: var(--ink-60);
+  background: #faf9f4;
 }
 
 .row-hidden {
@@ -1042,13 +1023,7 @@ table.dir tbody tr.row {
 
   .scope-note {
     align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
     padding: 11px 16px;
-  }
-
-  .scope-note a {
-    white-space: normal;
   }
 
   .searchbar {
