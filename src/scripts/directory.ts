@@ -147,6 +147,7 @@ function setup(root: ParentNode = document) {
 
   setupDetailPanel(root, rows);
   setupHelpModal(root);
+  setupFacetGuideModals(root);
   apply();
 }
 
@@ -425,8 +426,10 @@ function setupDetailPanel(root: ParentNode, rows: HTMLTableRowElement[]) {
   document.addEventListener("keydown", (e) => {
     if (panel.hidden) return;
     // The help overlay stacks above the detail panel; let it own the keys.
-    const help = document.querySelector<HTMLElement>("[data-help-panel]");
-    if (help && !help.hidden) return;
+    const overlay = document.querySelector<HTMLElement>(
+      "[data-help-panel]:not([hidden]), [data-facet-guide-panel]:not([hidden])",
+    );
+    if (overlay) return;
     if (e.key === "Escape") close();
     else if (e.key === "ArrowUp") {
       e.preventDefault();
@@ -465,6 +468,44 @@ function setupHelpModal(root: ParentNode) {
   document.addEventListener("keydown", (e) => {
     if (panel.hidden) return;
     if (e.key === "Escape") close();
+  });
+}
+
+function setupFacetGuideModals(root: ParentNode) {
+  const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-facet-guide-panel]"));
+  if (!panels.length) return;
+
+  const lastFocus = new Map<HTMLElement, HTMLElement | null>();
+
+  function open(panel: HTMLElement) {
+    if (panel.hidden) lastFocus.set(panel, document.activeElement as HTMLElement);
+    panel.hidden = false;
+    panel.querySelector<HTMLElement>(".sector-guide-card")?.focus();
+  }
+
+  function close(panel: HTMLElement) {
+    panel.hidden = true;
+    lastFocus.get(panel)?.focus();
+  }
+
+  root.querySelectorAll<HTMLButtonElement>("[data-facet-guide-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const dim = button.dataset.facetGuideOpen;
+      const panel = panels.find((item) => item.dataset.facetGuidePanel === dim);
+      if (panel) open(panel);
+    });
+  });
+
+  panels.forEach((panel) => {
+    panel.querySelectorAll<HTMLElement>("[data-facet-guide-close]").forEach((el) =>
+      el.addEventListener("click", () => close(panel)),
+    );
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const openPanel = panels.find((panel) => !panel.hidden);
+    if (openPanel) close(openPanel);
   });
 }
 
